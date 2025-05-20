@@ -3,14 +3,14 @@ package Model;
 public abstract class Habit {
     protected String name;
     protected String description;
-    protected int difficulty;
+    protected int level;
     protected int frequency;
     protected int streak;
 
-    public Habit(String name, String description, int difficulty, int frequency) {
+    public Habit(String name, String description, int level, int frequency) {
         this.name = name;
         this.description = description;
-        this.difficulty = difficulty;
+        this.level = level;
         this.frequency = frequency;
         this.streak = 0; // Initialize streak to 0
     }
@@ -31,12 +31,12 @@ public abstract class Habit {
         this.description = description;
     }
 
-    public int getDifficulty() {
-        return difficulty;
+    public int getlevel() {
+        return level;
     }
 
-    public void setDifficulty(int difficulty) {
-        this.difficulty = difficulty;
+    public void setlevel(int level) {
+        this.level = level;
     }
 
     public int getFrequency() {
