@@ -82,7 +82,6 @@ public class Main {
                 return;
             }
         }
-
         System.out.println("Invalid username or password. Try again.");
     }
 
@@ -93,22 +92,48 @@ public class Main {
 
     // USER INTERFACE
     public void menu() {
-        System.out.println("""
-                ========================================
-                            🌱 HABITICA 🌱
-                    Health Habit Tracker Application
-                ========================================
+        int input = 0;
 
-                [1] Add Habit
-                [2] View Habit Log
-                [3] Edit Habit
-                [4] Delete Habit
-                [5] Log Out
+        do {
+            System.out.println("""
+                    ========================================
+                                🌱 HABITICA 🌱
+                        Health Habit Tracker Application
+                    ========================================
+                    [1] Add Habit
+                    [2] View Habit Log
+                    [3] Edit Habit
+                    [4] Delete Habit
+                    [5] History
+                    [6] Achievements
+                    [7] Log Out""");
 
-                """);
-        
-        System.out.print("Option: ");
-        // Switch case
+            System.out.print("Option: ");
+
+            try {
+                input = s.nextInt();
+                s.nextLine(); // clear newline
+
+                switch (input) {
+                    case 1 -> addHabitMenu();
+                    case 2 -> viewHabitLog();
+                    case 3 -> editHabit();
+                    case 4 -> deleteHabit();
+                    case 5 -> history();
+                    case 6 -> achievement();
+                    case 7 -> {
+                        System.out.println("Logging out...");
+                        currentUser = null;
+                    }
+                    default -> System.out.println("Invalid option. Try again.");
+                }
+
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                s.nextLine(); // clear invalid input
+            }
+
+        } while (input != 5);
     }
 
     // HABIT MANAGEMENT
@@ -120,6 +145,7 @@ public class Main {
 
     public void deleteHabit() {}
 
-    
+    public void history() {}
 
+    public void achievement() {}
 }
