@@ -4,8 +4,8 @@ public class SleepHabit extends Habit {
     private int sleepDuration; // in hours
     private String sleepQuality; // e.g., "Good", "Average", "Poor"
 
-    public SleepHabit(String name, String description, int frequency, int sleepDuration, String sleepQuality) {
-        super(name, description, frequency);
+    public SleepHabit(String name, String description, int sleepDuration, String sleepQuality) {
+        super(name, description);
         this.sleepDuration = sleepDuration;
         this.sleepQuality = sleepQuality;
     }
@@ -25,5 +25,14 @@ public class SleepHabit extends Habit {
     public void setSleepQuality(String sleepQuality) {
         this.sleepQuality = sleepQuality;
     }
+
+    public boolean goalMet() {
+        
+    }
+
+    public void reset() {}
+
+    public void printDetails() {}
+
 
 }

@@ -1,12 +1,12 @@
 package Model;
 
-public class CaloriesTracker extends Habit {
+public class CaloriesTracker extends DefaultHabit {
     private int dailyCalorieGoal;
     private int caloriesConsumed;
 
-    public CaloriesTracker(String name, String description, int frequency, int dailyCalorieGoal) {
-        super(name, description, frequency);
-        this.dailyCalorieGoal = dailyCalorieGoal;
+    public CaloriesTracker(int goal) {
+        super("Calories Tracker", "Track your calorie intake");
+        this.dailyCalorieGoal = goal;
         this.caloriesConsumed = 0;
     }
 
@@ -18,11 +18,11 @@ public class CaloriesTracker extends Habit {
         return caloriesConsumed <= dailyCalorieGoal;
     }
 
-    public int getCaloriesConsumed() {
-        return caloriesConsumed;
+    public void reset() {
+        this.caloriesConsumed = 0;
     }
 
-    public void resetCalories() {
-        this.caloriesConsumed = 0;
+    public void printDetails() {
+        System.out.println("Calories Intake : " + caloriesConsumed + "/" + dailyCalorieGoal + "calories");
     }
 }

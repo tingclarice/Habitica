@@ -3,14 +3,17 @@ package Model;
 public abstract class Habit {
     protected String name;
     protected String description;
-    protected int level;
     protected int frequency;
     protected int streak;
 
-    public Habit(String name, String description, int frequency) {
+    public Habit(String name, String description) {
         this.name = name;
         this.description = description;
-        this.frequency = frequency;
+
+        // How often the user wants to complete habit
+        // e.g. 1 = Daily; 2 = Weekly; 3= Monthly;
+        this.frequency = 1;
+
         this.streak = 0; // Initialize streak to 0
     }
 
@@ -30,14 +33,6 @@ public abstract class Habit {
         this.description = description;
     }
 
-    public int getlevel() {
-        return level;
-    }
-
-    public void setlevel(int level) {
-        this.level = level;
-    }
-
     public int getFrequency() {
         return frequency;
     }
@@ -53,5 +48,12 @@ public abstract class Habit {
     public void setStreak(int streak) {
         this.streak = streak;
     }
+
+    // Enforced method for subclasses
+    public abstract boolean goalMet();
+
+    public abstract void reset();
+
+    public abstract void printDetails();
 
 }
