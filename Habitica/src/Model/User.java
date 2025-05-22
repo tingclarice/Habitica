@@ -7,6 +7,7 @@ public class User {
     protected String username;
     protected String password;
     protected ArrayList<Habit> habits;
+    private ArrayList<CustomHabit> customHabitTemplates = new ArrayList<>();
     
     // Constructor
     public User(String username, String password) {
@@ -45,4 +46,12 @@ public class User {
             habits.remove(index);
         }
     }
+
+    public ArrayList<CustomHabit> getCustomHabitTemplates() {
+        return customHabitTemplates;
+    }
+
+    public void addCustomHabitTemplate(CustomHabit habit) {
+        customHabitTemplates.add(habit);
+}
 }
