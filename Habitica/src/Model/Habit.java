@@ -7,10 +7,9 @@ public abstract class Habit {
     protected int frequency;
     protected int streak;
 
-    public Habit(String name, String description, int level, int frequency) {
+    public Habit(String name, String description, int frequency) {
         this.name = name;
         this.description = description;
-        this.level = level;
         this.frequency = frequency;
         this.streak = 0; // Initialize streak to 0
     }

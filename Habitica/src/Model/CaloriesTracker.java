@@ -4,8 +4,8 @@ public class CaloriesTracker extends Habit {
     private int dailyCalorieGoal;
     private int caloriesConsumed;
 
-    public CaloriesTracker(String name, String description, int level, int frequency, int dailyCalorieGoal) {
-        super(name, description, level, frequency);
+    public CaloriesTracker(String name, String description, int frequency, int dailyCalorieGoal) {
+        super(name, description, frequency);
         this.dailyCalorieGoal = dailyCalorieGoal;
         this.caloriesConsumed = 0;
     }

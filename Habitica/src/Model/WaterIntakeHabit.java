@@ -4,8 +4,8 @@ public class WaterIntakeHabit extends Habit {
     private int waterIntake; // in liters
     private int goal; // in liters
 
-    public WaterIntakeHabit(String name, String description, int level, int frequency, int goal) {
-        super(name, description, level, frequency);
+    public WaterIntakeHabit(String name, String description, int frequency, int goal) {
+        super(name, description, frequency);
         this.waterIntake = 0;
         this.goal = goal;
     }

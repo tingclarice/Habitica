@@ -4,8 +4,8 @@ public class SleepHabit extends Habit {
     private int sleepDuration; // in hours
     private String sleepQuality; // e.g., "Good", "Average", "Poor"
 
-    public SleepHabit(String name, String description, int difficulty, int frequency, int sleepDuration, String sleepQuality) {
-        super(name, description, difficulty, frequency);
+    public SleepHabit(String name, String description, int frequency, int sleepDuration, String sleepQuality) {
+        super(name, description, frequency);
         this.sleepDuration = sleepDuration;
         this.sleepQuality = sleepQuality;
     }

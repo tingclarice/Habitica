@@ -4,8 +4,8 @@ public class CustomHabit extends Habit {
     private int goal;
     private int progress;
 
-    public CustomHabit(String name, String description, int level, int frequency, int goal) {
-        super(name, description, level, frequency);
+    public CustomHabit(String name, String description, int frequency, int goal) {
+        super(name, description, frequency);
         this.goal = goal;
         this.progress = 0;
     }
