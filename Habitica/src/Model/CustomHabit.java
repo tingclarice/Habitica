@@ -14,10 +14,6 @@ public class CustomHabit extends Habit {
         progress += amount;
     }
 
-    public boolean goalMet() {
-        return progress >= goal;
-    }
-
     public int getProgress() {
         return progress;
     }
@@ -34,5 +30,16 @@ public class CustomHabit extends Habit {
         this.goal = goal;
     }
 
+    @Override
+    public boolean goalMet() {
+        return progress >= goal;
+    }
+
+    @Override
     public void printDetails() {}
+
+    @Override
+    public void reset() {
+        this.progress = 0; // Reset progress to 0
+    }
 }

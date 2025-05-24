@@ -4,9 +4,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import Model.CaloriesTracker;
-import Model.Habit;
 import Model.User;
+import Model.Habit;
+// import Model.CustomHabit;
+import Model.DefaultHabit;
+import Model.WaterIntakeHabit;
+import Model.CaloriesTracker;
+import Model.SleepHabit;
+import Model.ExerciseHabit;
 
 public class Main {
     private ArrayList<User> users = new ArrayList<>();
@@ -236,7 +241,7 @@ public class Main {
             switch (choice) {
                 case 1 -> addCaloriesTracker();
                 // case 2 -> addWaterIntakeHabit();
-                // case 3 -> addSleepHabit();
+                case 3 -> sleepHabit();
                 case 4 -> createCustomHabit();
                 // case 5 -> addFromCustomTemplates();
                 case 6 -> System.out.println("Cancelled.");
@@ -261,13 +266,13 @@ public class Main {
                     int goal = s.nextInt();
                     s.nextLine();
 
-                    CaloriesTracker ct = new CaloriesTracker(
-                        "Calories Tracker", 
-                        "Track your daily calorie intake", // CHECK THE NEEDED PARAMS AGAIN PLS!!
-                        1, 1, goal
-                    );
+                    // CaloriesTracker ct = new CaloriesTracker(
+                    //     "Calories Tracker", 
+                    //     "Track your daily calorie intake", // CHECK THE NEEDED PARAMS AGAIN PLS!!
+                    //     1, 1, goal
+                    // );
 
-                    currentUser.addHabit(ct);
+                    // currentUser.addHabit(ct);
                     System.out.println("✅ Calories Tracker added successfully.");
                 } catch (InputMismatchException e) {
                     System.out.println("❌ Please enter a valid number for calorie goal.");
@@ -286,4 +291,104 @@ public class Main {
     public void history() {}
 
     public void achievement() {}
+
+    // Habit Specific Menu UI's
+    public void sleepHabit() {
+        System.out.println("=== SLEEP HABIT ===");
+        System.out.println("Enter Your Sleep Duration Target");
+        System.out.println("""
+                1. 6 hours
+                2. 7 hours
+                3. 8 hours
+                4. 9 hours
+                5. Other
+                """);
+        System.out.print("Select a target: ");
+        int target = s.nextInt();
+        s.nextLine(); // clear newline
+        int targetSleep = switch (target) {
+            case 1 -> 6;
+            case 2 -> 7;
+            case 3 -> 8;
+            case 4 -> 9;
+            case 5 -> {
+                System.out.print("Enter your custom sleep target (in hours): ");
+                yield s.nextInt();
+            }
+            default -> {
+                System.out.println("Invalid choice. Defaulting to 8 hours.");
+                yield 8;
+            }
+        };
+    
+        System.out.print("Enter today's sleep duration (in hours): ");
+        int sleepDuration = s.nextInt();
+        s.nextLine();
+    
+        System.out.print("Enter sleep quality (Good/Average/Poor): ");
+        String sleepQuality = s.nextLine();
+    
+        SleepHabit sleepHabit = new SleepHabit(
+            sleepDuration, 
+            sleepQuality, 
+            targetSleep
+        );
+    
+        // Tampilkan hasil (jika mau)
+        System.out.println("Your Sleep Habit :");
+        System.out.println("Target: " + sleepHabit.getTargetSleepDuration() + " jam");
+        System.out.println("Duration: " + sleepHabit.getSleepDuration() + " jam");
+        System.out.println("Quality: " + sleepHabit.getSleepQuality());
+        System.out.println("Habit added successfully!");
+    }
+
+    public void ExerciseHabit() {
+        System.out.println("=== EXERCISE HABIT ===");
+        System.out.println("Enter Your Exercise Duration Target");
+        System.out.println("""
+                1. 30 minutes
+                2. 1 hour
+                3. 1.5 hours
+                4. 2 hours
+                5. Other
+                """);
+        System.out.print("Select a target: ");
+        int target = s.nextInt();
+        s.nextLine();
+
+        int targetExercise = switch (target) {
+            case 1 -> 30;
+            case 2 -> 60;
+            case 3 -> 90;
+            case 4 -> 120;
+            case 5 -> {
+                System.out.print("Enter your custom exercise target (in minutes): ");
+                yield s.nextInt();
+            }
+            default -> {
+                System.out.println("Invalid choice. Defaulting to 60 minutes.");
+                yield 60;
+            }
+        };
+        
+        System.out.print("Enter your exercise duration (in minutes): ");
+        int exerciseDuration = s.nextInt();
+        System.out.println ("Enter your exercise type (e.g., Cardio, Strength): ");
+        String exerciseType = s.nextLine();
+        // System.out.print("Enter your exercise frequency (e.g., Daily, Weekly): ");
+        // String exerciseFrequency = s.nextLine();
+
+        ExerciseHabit exerciseHabit = new ExerciseHabit(
+            targetExercise,
+            exerciseDuration, 
+            exerciseType
+        );
+
+        System.out.println("Your Exercise Habit :");
+        System.out.println("Target: " + exerciseHabit.getTargetduration() + " minutes");
+        System.out.println("Duration: " + exerciseHabit.getDuration() + " minutes");
+        System.out.println("Type: " + exerciseHabit.getType());
+        System.out.println("Frequency: " + exerciseHabit.getFrequency());
+        System.out.println("Habit added successfully!");
+    }
 }
