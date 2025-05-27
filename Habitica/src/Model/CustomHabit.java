@@ -36,10 +36,18 @@ public class CustomHabit extends Habit {
     }
 
     @Override
-    public void printDetails() {}
+    public void reset() {
+        this.progress = 0;
+    }
 
     @Override
-    public void reset() {
-        this.progress = 0; // Reset progress to 0
+    public void printDetails() {
+        System.out.println("Custom Habit: " + getName());
+        System.out.println("Description: " + getDescription());
+        System.out.println("Goal: " + goal);
+        System.out.println("Progress: " + progress);
+        System.out.println("Goal Met: " + (goalMet() ? "Yes" : "No"));
     }
+
+    
 }

@@ -3,17 +3,11 @@ package Model;
 public abstract class Habit {
     protected String name;
     protected String description;
-    protected int frequency;
     protected int streak;
 
     public Habit(String name, String description) {
         this.name = name;
         this.description = description;
-
-        // How often the user wants to complete habit
-        // e.g. 1 = Daily; 2 = Weekly; 3= Monthly;
-        this.frequency = 1;
-
         this.streak = 0; // Initialize streak to 0
     }
 
@@ -31,14 +25,6 @@ public abstract class Habit {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public int getFrequency() {
-        return frequency;
-    }
-
-    public void setFrequency(int frequency) {
-        this.frequency = frequency;
     }
 
     public int getStreak() {

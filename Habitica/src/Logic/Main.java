@@ -10,6 +10,7 @@ import Model.Habit;
 import Model.DefaultHabit;
 import Model.WaterIntakeHabit;
 import Model.CaloriesTracker;
+import Model.CustomHabit;
 import Model.SleepHabit;
 import Model.ExerciseHabit;
 
@@ -29,6 +30,8 @@ public class Main {
         // ASK CURRENT DATE
         while (true) {
         try {
+            System.out.println("=== WELCOME TO HABITICA ===");
+            System.out.println("Please enter the current date to start tracking your habits.");
             System.out.print("Enter current year (e.g. 2025): ");
             year = s.nextInt();
             if (year < 1900 || year > 2100) {
@@ -75,6 +78,7 @@ public class Main {
         // START MENU
         do {
             System.out.println("""
+
                     ========================================
                                 🌱 HABITICA 🌱
                         Health Habit Tracker Application
@@ -128,7 +132,7 @@ public class Main {
     }
 
     public void logIn() {
-        System.out.println("=== LOG IN ===");
+        System.out.println("\n=== LOG IN ===");
         System.out.print("Enter username: ");
         String username = s.nextLine();
 
@@ -138,7 +142,7 @@ public class Main {
         for (User user : users) {
             if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
                 currentUser = user;
-                System.out.println("Welcome back, " + username + "!");
+                System.out.println("\nWelcome back, " + username + "!");
                 menu(); // go to the main habit menu
                 return;
             }
@@ -147,7 +151,7 @@ public class Main {
     }
 
     public void exit() {
-        System.out.println("Thank you for using Habitica! Stay healthy 🌱");
+        System.out.println("\nThank you for using Habitica! Stay healthy 🌱");
         System.exit(0);
     }
 
@@ -239,7 +243,7 @@ public class Main {
             s.nextLine();
 
             switch (choice) {
-                case 1 -> addCaloriesTracker();
+                case 1 -> CaloriesTrackerHabit();
                 // case 2 -> addWaterIntakeHabit();
                 case 3 -> sleepHabit();
                 case 4 -> createCustomHabit();
@@ -254,45 +258,96 @@ public class Main {
     }
 
     // ADD HABIT MENU FOR EACH HABITs
-    private void addCaloriesTracker() {
-        // Check if user already has a CaloriesTracker
-        for (Habit habit : currentUser.getHabits()) {
-            if (habit instanceof CaloriesTracker) {
-                System.out.println("⚠️ You already have a Calories Tracker.");
-                return;
-            } else {
-                try {
-                    System.out.print("Enter your daily calorie goal: ");
-                    int goal = s.nextInt();
-                    s.nextLine();
-
-                    // CaloriesTracker ct = new CaloriesTracker(
-                    //     "Calories Tracker", 
-                    //     "Track your daily calorie intake", // CHECK THE NEEDED PARAMS AGAIN PLS!!
-                    //     1, 1, goal
-                    // );
-
-                    // currentUser.addHabit(ct);
-                    System.out.println("✅ Calories Tracker added successfully.");
-                } catch (InputMismatchException e) {
-                    System.out.println("❌ Please enter a valid number for calorie goal.");
-                    s.nextLine(); // clear buffer
-                }
-            }
-        }
-    }
 
     public void editHabit() {}
 
     public void deleteHabit() {}
 
-    public void createCustomHabit() {}
+    public void createCustomHabit() {
+    System.out.println("=== CREATE CUSTOM HABIT ===");
+
+    System.out.print("Enter name of your habit: ");
+    String name = s.nextLine();
+
+    System.out.print("Enter description: ");
+    String description = s.nextLine();
+
+    System.out.print("Enter your goal (e.g., 10 repetitions, 100 pages): ");
+    int goal = 0;
+
+    try {
+        goal = s.nextInt();
+        s.nextLine(); // clear buffer
+    } catch (InputMismatchException e) {
+        System.out.println("Invalid input. Goal must be a number.");
+        s.nextLine(); // clear invalid input
+        return; // exit early
+    }
+
+    // Create the custom habit
+    CustomHabit customHabit = new CustomHabit(name, description, goal);
+
+    // (Optional) Add to a list of habits if you maintain one
+    currentUser.addCustomHabitTemplate(customHabit); // Assuming habitList is a List<Habit> you maintain
+
+    System.out.println("✅ Custom habit added successfully!");
+    customHabit.printDetails(); // Show details
+}
+
 
     public void history() {}
 
     public void achievement() {}
 
     // Habit Specific Menu UI's
+    public void CaloriesTrackerHabit() {
+        System.out.println("=== CALORIES TRACKER ===");
+
+        // Ask for calorie goal
+        System.out.println("Select your daily calorie goal:");
+        System.out.println("""
+            1. 1500 kcal
+            2. 1800 kcal
+            3. 2000 kcal
+            4. 2500 kcal
+            5. Custom
+            """);
+        System.out.print("Choice: ");
+        int choice = s.nextInt();
+
+        int calorieGoal = switch (choice) {
+            case 1 -> 1500;
+            case 2 -> 1800;
+            case 3 -> 2000;
+            case 4 -> 2500;
+            case 5 -> {
+                System.out.print("Enter your custom daily calorie goal: ");
+                yield s.nextInt();
+            }
+            default -> {
+                System.out.println("Invalid choice. Defaulting to 2000 kcal.");
+                yield 2000;
+            }
+        };
+
+        // Ask for current calorie intake
+        System.out.print("Enter the number of calories you've consumed today: ");
+        int caloriesConsumed = s.nextInt();
+
+        // Create tracker
+        CaloriesTracker caloriesTracker = new CaloriesTracker(calorieGoal);
+        caloriesTracker.logCalories(caloriesConsumed);
+
+        // Add to habit list (assuming you have one)
+        currentUser.getHabits().add(caloriesTracker);
+
+        // Feedback to user
+        System.out.println("Calories Tracker Habit added!");
+        System.out.println("Goal: " + calorieGoal + " kcal");
+        System.out.println("Calories consumed: " + caloriesConsumed + " kcal");
+        System.out.println("Goal met: " + (caloriesTracker.goalMet()));
+    }
+
     public void sleepHabit() {
         System.out.println("=== SLEEP HABIT ===");
         System.out.println("Enter Your Sleep Duration Target");
@@ -388,7 +443,29 @@ public class Main {
         System.out.println("Target: " + exerciseHabit.getTargetduration() + " minutes");
         System.out.println("Duration: " + exerciseHabit.getDuration() + " minutes");
         System.out.println("Type: " + exerciseHabit.getType());
-        System.out.println("Frequency: " + exerciseHabit.getFrequency());
         System.out.println("Habit added successfully!");
+    }
+
+    public void addWaterIntakeHabit() {
+        System.out.println("=== WATER INTAKE HABIT ===");
+        System.out.print("Enter your daily water intake goal (in liters): ");
+        int goal = s.nextInt();
+        s.nextLine();
+
+        System.out.print("Enter your current water intake (in liters): ");
+        int currentIntake = s.nextInt();
+        s.nextLine();
+
+        WaterIntakeHabit waterHabit = new WaterIntakeHabit(
+            "Water Intake", 
+            "Track your daily water intake", 
+            goal
+        );
+
+        waterHabit.logWaterIntake(currentIntake);
+        currentUser.addHabit(waterHabit);
+
+        System.out.println("✅ Water Intake Habit added successfully.");
+        waterHabit.printDetails();
     }
 }

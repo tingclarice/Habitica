@@ -28,15 +28,6 @@ public class ExerciseHabit extends DefaultHabit {
         this.targetduration = targetduration;
     }
 
-
-    public int getFrequency() {
-        return frequency;
-    }
-
-    public void setFrequency(int frequency) {
-        this.frequency = frequency;
-    }
-
     public int getDuration() {
         return duration;
     }

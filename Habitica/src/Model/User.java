@@ -54,4 +54,37 @@ public class User {
     public void addCustomHabitTemplate(CustomHabit habit) {
         customHabitTemplates.add(habit);
 }
+
+    public void removeCustomHabitTemplate(int index) {
+        if (index >= 0 && index < customHabitTemplates.size()) {
+            customHabitTemplates.remove(index);
+        }
+    }
+
+    // Method to reset all habits
+    public void resetAllHabits() {
+        for (Habit habit : habits) {
+            habit.reset();
+        }
+    }
+
+    // Method to print all habits
+    public void printAllHabits() {
+        for (Habit habit : habits) {
+            habit.printDetails();
+        }
+    }
+
+    // view all templates 
+    public void viewCustomHabitTemplates() {
+        if (customHabitTemplates.isEmpty()) {
+            System.out.println("No custom habit templates saved.");
+            return;
+        }
+        for (int i = 0; i < customHabitTemplates.size(); i++) {
+            CustomHabit ch = customHabitTemplates.get(i);
+            System.out.printf("[%d] %s - %s (Goal: %d)\n", i + 1, ch.getName(), ch.getDescription(), ch.getGoal());
+        }
+    }
+    
 }
