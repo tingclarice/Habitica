@@ -22,6 +22,7 @@ public class Main {
     private int day;
     private int month;
     private int year; 
+    private int habitCount = 0;
 
     // STARTING SCREEN
     public void start() {
@@ -297,11 +298,20 @@ public class Main {
 
     public void history() {}
 
-    public void achievement() {}
+    public void achievement() {
+        System.out.println("=== ACHIEVEMENTS 🏆 ===");
+        
+        if(habitCount == 0){
+            System.out.println("You have no achievements yet. Keep tracking your habits!");
+        } else if (habitCount == 1){
+            System.out.println();
+            
+        }
+    }
 
     // Habit Specific Menu UI's
     public void CaloriesTrackerHabit() {
-        System.out.println("=== CALORIES TRACKER ===");
+        System.out.println("=== CALORIES TRACKER 🥗 ===");
 
         // Ask for calorie goal
         System.out.println("Select your daily calorie goal:");
@@ -346,10 +356,14 @@ public class Main {
         System.out.println("Goal: " + calorieGoal + " kcal");
         System.out.println("Calories consumed: " + caloriesConsumed + " kcal");
         System.out.println("Goal met: " + (caloriesTracker.goalMet()));
+
+        if(calorieGoal == caloriesTracker.getCaloriesConsumed()) {
+            habitCount++;
+        }
     }
 
     public void sleepHabit() {
-        System.out.println("=== SLEEP HABIT ===");
+        System.out.println("=== SLEEP HABIT 💤 ===");
         System.out.println("Enter Your Sleep Duration Target");
         System.out.println("""
                 1. 6 hours
@@ -395,10 +409,13 @@ public class Main {
         System.out.println("Duration: " + sleepHabit.getSleepDuration() + " jam");
         System.out.println("Quality: " + sleepHabit.getSleepQuality());
         System.out.println("Habit added successfully!");
+        if(sleepDuration >= sleepHabit.getTargetSleepDuration()) {
+            habitCount++;
+        }
     }
 
     public void ExerciseHabit() {
-        System.out.println("=== EXERCISE HABIT ===");
+        System.out.println("=== EXERCISE HABIT 🚴🏻 ===");
         System.out.println("Enter Your Exercise Duration Target");
         System.out.println("""
                 1. 30 minutes
@@ -444,10 +461,14 @@ public class Main {
         System.out.println("Duration: " + exerciseHabit.getDuration() + " minutes");
         System.out.println("Type: " + exerciseHabit.getType());
         System.out.println("Habit added successfully!");
+
+        if(exerciseDuration >= exerciseHabit.getTargetduration()) {
+            habitCount++;
+        }
     }
 
     public void addWaterIntakeHabit() {
-        System.out.println("=== WATER INTAKE HABIT ===");
+        System.out.println("=== WATER INTAKE HABIT 🥛 ===");
         System.out.print("Enter your daily water intake goal (in liters): ");
         int goal = s.nextInt();
         s.nextLine();
@@ -467,5 +488,9 @@ public class Main {
 
         System.out.println("✅ Water Intake Habit added successfully.");
         waterHabit.printDetails();
+
+        if(currentIntake >= waterHabit.getGoal()){
+            habitCount++;
+        }
     }
 }
