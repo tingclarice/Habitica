@@ -253,7 +253,7 @@ public class Main {
     public void addHabitMenu() {
         int choice = 0;
 
-        System.out.println("=== ADD NEW HABIT ===");
+        System.out.println("\n=== ADD NEW HABIT ===");
         System.out.println("Choose a habit type:");
 
         // 1-3: Built-in habits
@@ -421,7 +421,7 @@ public class Main {
         int choice = s.nextInt();
         System.out.println("");
 
-        int calorieGoal = switch (choice) {
+        int dailyCalorieGoal = switch (choice) {
             case 1 -> 1500;
             case 2 -> 1800;
             case 3 -> 2000;
@@ -439,25 +439,27 @@ public class Main {
         // Ask for current calorie intake
         System.out.print("\nEnter the number of calories you've consumed today: ");
         int caloriesConsumed = s.nextInt();
-
-        // Create tracker
-        CaloriesTracker caloriesTracker = new CaloriesTracker(calorieGoal);
+    
+        CaloriesTracker caloriesTracker = new CaloriesTracker(dailyCalorieGoal);
         caloriesTracker.logCalories(caloriesConsumed);
-
-        // Add to habit list (assuming you have one)
         currentUser.getHabits().add(caloriesTracker);
-
-        // Feedback to user
+    
         System.out.println("Calories Tracker Habit added!");
-        System.out.println("Goal: " + calorieGoal + " kcal");
+        System.out.println("Goal: " + dailyCalorieGoal + " kcal");
         System.out.println("Calories consumed: " + caloriesConsumed + " kcal");
         System.out.println("Goal met: " + (caloriesTracker.goalMet()));
+    
+        // if (caloriesTracker.goalMet()) {
+        //     currentUser.getAchievements().add(
+        //         new Achievement("Calorie Goal", "You met your calorie goal today!")
+        //     );
 
         // if(calorieGoal == caloriesTracker.getCaloriesConsumed()) {
         //     habitCount++;
         //     User.getAchievements().add(new Achievement());
         // }
     }
+    
 
     public void sleepHabit() {
         System.out.println("=== SLEEP HABIT 💤 ===");
@@ -472,7 +474,7 @@ public class Main {
         System.out.print("Select a target: ");
         int target = s.nextInt();
         s.nextLine(); // clear newline
-        int targetSleep = switch (target) {
+        int targetSleepDuration = switch (target) {
             case 1 -> 6;
             case 2 -> 7;
             case 3 -> 8;
@@ -497,7 +499,7 @@ public class Main {
         SleepHabit sleepHabit = new SleepHabit(
             sleepDuration, 
             sleepQuality, 
-            targetSleep
+            targetSleepDuration
         );
     
         // Tampilkan hasil (jika mau)
@@ -525,7 +527,7 @@ public class Main {
         int target = s.nextInt();
         s.nextLine();
 
-        int targetExercise = switch (target) {
+        int targetduration= switch (target) {
             case 1 -> 30;
             case 2 -> 60;
             case 3 -> 90;
@@ -541,16 +543,16 @@ public class Main {
         };
         
         System.out.print("Enter your exercise duration (in minutes): ");
-        int exerciseDuration = s.nextInt();
+        int duration = s.nextInt();
         System.out.println ("Enter your exercise type (e.g., Cardio, Strength): ");
-        String exerciseType = s.nextLine();
+        String type = s.nextLine();
         // System.out.print("Enter your exercise frequency (e.g., Daily, Weekly): ");
         // String exerciseFrequency = s.nextLine();
 
         ExerciseHabit exerciseHabit = new ExerciseHabit(
-            targetExercise,
-            exerciseDuration, 
-            exerciseType
+            targetduration,
+            duration, 
+            type
         );
 
         System.out.println("Your Exercise Habit :");
@@ -559,19 +561,36 @@ public class Main {
         System.out.println("Type: " + exerciseHabit.getType());
         System.out.println("Habit added successfully!");
 
-        if(exerciseDuration >= exerciseHabit.getTargetduration()) {
-            habitCount++;
-        }
+        // if(exerciseDuration >= exerciseHabit.getTargetduration()) {
+        //     habitCount++;
+        // }
     }
 
     public void addWaterIntakeHabit() {
-        System.out.println("=== WATER INTAKE HABIT 🥛 ===");
-        System.out.print("Enter your daily water intake goal (in liters): ");
-        int goal = s.nextInt();
+        System.out.println("\n=== WATER INTAKE HABIT 🥛 ===");
+        System.out.print("Enter your daily water intake goal (in liters) ");
+        System.out.println("""
+
+                1. 1 liters
+                2. 2 liters
+                3. 3 liters
+                """);
+        System.out.println("Option: ");
+        int goals = s.nextInt();
         s.nextLine();
 
+        int goal = switch (goals) {
+            case 1 -> 1;
+            case 2 -> 2;
+            case 3 -> 3;
+            default -> {
+                System.out.print("Invalid choice. Please enter your custom goal (in liters): ");
+                yield s.nextInt();
+            }
+        };
+
         System.out.print("Enter your current water intake (in liters): ");
-        int currentIntake = s.nextInt();
+        int waterIntake = s.nextInt();
         s.nextLine();
 
         WaterIntakeHabit waterHabit = new WaterIntakeHabit(
@@ -580,15 +599,16 @@ public class Main {
             goal
         );
 
-        waterHabit.logWaterIntake(currentIntake);
+        waterHabit.logWaterIntake(waterIntake);
         currentUser.addHabit(waterHabit);
+
 
         System.out.println("✅ Water Intake Habit added successfully.");
         waterHabit.printDetails();
 
-        if(currentIntake >= waterHabit.getGoal()) {
-            habitCount++;
-        }
+        // if(currentIntake >= waterHabit.getGoal()) {
+        //     habitCount++;
+        // }
         
     }
 
