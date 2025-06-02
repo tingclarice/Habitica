@@ -16,6 +16,8 @@ import Model.SleepHabit;
 import Model.ExerciseHabit;
 
 public class Main {
+
+    
     private ArrayList<User> users = new ArrayList<>();
     private ArrayList<Achievement> achievements = new ArrayList<>();
     private Scanner s = new Scanner(System.in);
@@ -128,7 +130,7 @@ public class Main {
 
     // SIGN UP & LOG IN
     public void signUp() {
-        System.out.println("=== SIGN UP ===");
+        System.out.println("\n=== SIGN UP ===");
         System.out.print("Enter username: ");
         String username = s.nextLine();
 
@@ -177,12 +179,11 @@ public class Main {
 
         do {
             System.out.println("""
+
                     ========================================
                                 🌱 HABITICA 🌱
                         Health Habit Tracker Application
-                    ========================================""");
-            System.out.println("Calories Consumed Today: " + caloriesTracker.getCaloriesConsumed() + "/" + calorieGoal + " kcal");       
-            System.out.println("""
+                    ========================================
                     
                     [1] Next Day
                     [2] Add Habit
@@ -247,30 +248,58 @@ public class Main {
     public void addHabitMenu() {
         int choice = 0;
 
-        System.out.println("""
-            === ADD NEW HABIT ===
-            Choose a habit type:
-            [1] Calories Tracker
-            [2] Water Intake Habit
-            [3] Sleep Habit
-        """);
+        System.out.println("=== ADD NEW HABIT ===");
+        System.out.println("Choose a habit type:");
 
-        // ADD: loop through custom habits, and add 'cancel' option
+        // 1-3: Built-in habits
+        System.out.println("[1] Calories Tracker");
+        System.out.println("[2] Water Intake Habit");
+        System.out.println("[3] Sleep Habit");
+
+        // Starting option number for custom templates
+        int optionNumber = 4;
+
+        // List custom habit templates dynamically
+        ArrayList<CustomHabit> customTemplates = currentUser.getCustomHabitTemplates();
+        for (int i = 0; i < customTemplates.size(); i++) {
+            CustomHabit ch = customTemplates.get(i);
+            System.out.printf("[%d] Custom: %s (Goal: %d)\n", optionNumber, ch.getName(), ch.getGoal());
+            optionNumber++;
+        }
+
+        // Cancel option
+        System.out.printf("[%d] Cancel\n", optionNumber);
 
         try {
             System.out.print("Option: ");
             choice = s.nextInt();
-            s.nextLine();
+            s.nextLine(); // clear newline
 
-            switch (choice) {
-                case 1 -> CaloriesTrackerHabit();
-                // case 2 -> addWaterIntakeHabit();
-                case 3 -> sleepHabit();
-                case 4 -> createCustomHabit();
-                // case 5 -> addFromCustomTemplates();
-                case 6 -> System.out.println("Cancelled.");
-                default -> System.out.println("Invalid choice.");
+            int builtInCount = 3;
+            int cancelOption = builtInCount + customTemplates.size() + 1;
+
+            if (choice >= 1 && choice <= builtInCount) {
+                switch (choice) {
+                    case 1 -> CaloriesTrackerHabit();
+                    case 2 -> addWaterIntakeHabit();
+                    case 3 -> sleepHabit();
+                }
+            } else if (choice > builtInCount && choice < cancelOption) {
+                // User chose a custom habit template
+                int templateIndex = choice - builtInCount - 1;
+                CustomHabit template = customTemplates.get(templateIndex);
+
+                // Create a new CustomHabit from template and add to user's habits
+                CustomHabit newCustomHabit = new CustomHabit(template.getName(), template.getDescription(), template.getGoal());
+                currentUser.addHabit(newCustomHabit);
+
+                System.out.println("Custom Habit '" + newCustomHabit.getName() + "' added successfully!");
+            } else if (choice == cancelOption) {
+                System.out.println("Cancelled.");
+            } else {
+                System.out.println("Invalid choice.");
             }
+
         } catch (InputMismatchException e) {
             System.out.println("Please enter a valid number.");
             s.nextLine(); // clear buffer
@@ -284,37 +313,49 @@ public class Main {
     public void deleteHabit() {}
 
     public void createCustomHabit() {
-    System.out.println("=== CREATE CUSTOM HABIT ===");
+        System.out.println("\n=== CREATE CUSTOM HABIT ===");
 
-    System.out.print("Enter name of your habit: ");
-    String name = s.nextLine();
+        System.out.print("Enter name of your habit: ");
+        String name = s.nextLine();
 
-    System.out.print("Enter description: ");
-    String description = s.nextLine();
+        System.out.print("Enter description: ");
+        String description = s.nextLine();
 
-    System.out.print("Enter your goal (e.g., 10 repetitions, 100 pages): ");
-    int goal = 0;
+        System.out.print("Enter your goal (e.g., 10 repetitions, 100 pages): ");
+        int goal = 0;
 
-    try {
-        goal = s.nextInt();
-        s.nextLine(); // clear buffer
-    } catch (InputMismatchException e) {
-        System.out.println("Invalid input. Goal must be a number.");
-        s.nextLine(); // clear invalid input
-        return; // exit early
+        try {
+            goal = s.nextInt();
+            s.nextLine(); // clear buffer
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Goal must be a number.");
+            s.nextLine(); // clear invalid input
+            return; // exit early
+        }
+
+        // Create the custom habit
+        CustomHabit customHabit = new CustomHabit(name, description, goal);
+
+        // (Optional) Add to a list of habits if you maintain one
+        currentUser.addCustomHabitTemplate(customHabit); // Assuming habitList is a List<Habit> you maintain
+
+        System.out.println("✅ Custom habit added successfully!");
+        customHabit.printDetails(); // Show details
+        menu();
     }
 
-    // Create the custom habit
-    CustomHabit customHabit = new CustomHabit(name, description, goal);
+// <<<<<<< HEAD
+//     // Create the custom habit
+//     CustomHabit customHabit = new CustomHabit(name, description, goal);
 
-    // (Optional) Add to a list of habits if you maintain one
-    currentUser.addCustomHabitTemplate(customHabit); // Assuming habitList is a List<Habit> you maintain
+//     // (Optional) Add to a list of habits if you maintain one
+//     currentUser.addCustomHabitTemplate(customHabit); // Assuming habitList is a List<Habit> you maintain
 
-    System.out.println("✅ Custom habit added successfully!");
-    customHabit.printDetails(); // Show details
-}
+//     System.out.println("✅ Custom habit added successfully!");
+//     customHabit.printDetails(); // Show details
+// }
 
-    // HISTORY & ACHIEVEMENTS
+//     // HISTORY & ACHIEVEMENTS
 
     public void history() {}
 
