@@ -2,8 +2,6 @@ package Model;
 
 import java.util.ArrayList;
 
-import Model.Habit;
-
 public class User {
     protected String username;
     protected String password;
@@ -93,17 +91,15 @@ public class User {
     public ArrayList<Achievement> getAchievements() {
         return achievements;
     }
-    public void addAchievement(Achievement achievement) {
-        achievements.add(achievement);
-    }
-
-    public void countachievements() {
     
+    public void addAchievement(Achievement achievement) {
+        if (!achievements.contains(achievement)) {
+            achievements.add(achievement);
+            System.out.println("🎉 Achievement unlocked: " + achievement.getAchievement());
+        }
     }
-
-    public int getcompleteachievements(){
-        return achievements.size();
-    }
+    
+    
     
     
 }
