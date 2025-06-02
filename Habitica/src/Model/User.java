@@ -1,6 +1,7 @@
 package Model;
 
 import java.util.ArrayList;
+
 import Model.Habit;
 
 public class User {
@@ -8,7 +9,7 @@ public class User {
     protected String password;
     protected ArrayList<Habit> habits;
     private ArrayList<CustomHabit> customHabitTemplates = new ArrayList<>();
-    
+
     // Constructor
     public User(String username, String password) {
         this.username = username;
@@ -86,5 +87,4 @@ public class User {
             System.out.printf("[%d] %s - %s (Goal: %d)\n", i + 1, ch.getName(), ch.getDescription(), ch.getGoal());
         }
     }
-    
 }

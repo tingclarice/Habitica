@@ -14,6 +14,10 @@ public class CustomHabit extends Habit {
         progress += amount;
     }
 
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+
     public int getProgress() {
         return progress;
     }
@@ -44,10 +48,10 @@ public class CustomHabit extends Habit {
     public void printDetails() {
         System.out.println("Custom Habit: " + getName());
         System.out.println("Description: " + getDescription());
-        System.out.println("Goal: " + goal);
-        System.out.println("Progress: " + progress);
-        System.out.println("Goal Met: " + (goalMet() ? "Yes" : "No"));
+        System.out.println("Progress: " + progress + "/" + goal);
+        System.out.println("Goal Met: " + goalMet());
     }
+
 
     
 }

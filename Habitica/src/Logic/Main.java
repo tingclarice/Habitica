@@ -166,7 +166,14 @@ public class Main {
                     ========================================
                                 🌱 HABITICA 🌱
                         Health Habit Tracker Application
-                    ========================================
+                    ========================================""");
+
+            System.out.println(currentUser.getUsername() + "'s Recap");
+            System.out.println("Current Date: " + year + "-" + month + "-" + day);
+            
+            System.out.println();
+
+            System.out.println("""
                     [1] Next Day
                     [2] Add Habit
                     [3] Edit Habit
@@ -202,7 +209,7 @@ public class Main {
                 s.nextLine(); // clear invalid input
             }
 
-        } while (input != 5);
+        } while (input != 8);
     }
 
     // DAY PROGRESSION
@@ -270,11 +277,22 @@ public class Main {
                 int templateIndex = choice - builtInCount - 1;
                 CustomHabit template = customTemplates.get(templateIndex);
 
-                // Create a new CustomHabit from template and add to user's habits
+                // Ask for progress
+                System.out.printf("You selected: %s\n", template.getName());
+                System.out.printf("Goal: %d\n", template.getGoal());
+                System.out.print("Enter today's progress: ");
+                int progress = s.nextInt();
+                s.nextLine();
+
+                // Create a new CustomHabit and set progress
                 CustomHabit newCustomHabit = new CustomHabit(template.getName(), template.getDescription(), template.getGoal());
+                newCustomHabit.setProgress(progress);
                 currentUser.addHabit(newCustomHabit);
 
-                System.out.println("Custom Habit '" + newCustomHabit.getName() + "' added successfully!");
+                // Show result
+                System.out.println("✅ Custom Habit '" + newCustomHabit.getName() + "' added successfully!");
+                System.out.printf("Progress: %d / %d\n", newCustomHabit.getProgress(), newCustomHabit.getGoal());
+                System.out.println("Goal met: " + (newCustomHabit.goalMet() ? "✅ Yes" : "❌ No"));
             } else if (choice == cancelOption) {
                 System.out.println("Cancelled.");
             } else {
@@ -325,7 +343,8 @@ public class Main {
         menu();
     }
 
-    public void history() {}
+    public void history() {
+    }
 
     public void achievement() {
         System.out.println("=== ACHIEVEMENTS 🏆 ===");
@@ -386,9 +405,6 @@ public class Main {
         System.out.println("Calories consumed: " + caloriesConsumed + " kcal");
         System.out.println("Goal met: " + (caloriesTracker.goalMet()));
 
-        if(calorieGoal == caloriesTracker.getCaloriesConsumed()) {
-            habitCount++;
-        }
     }
 
     public void sleepHabit() {
