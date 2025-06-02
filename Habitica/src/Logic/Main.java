@@ -184,15 +184,12 @@ public class Main {
                                 🌱 HABITICA 🌱
                         Health Habit Tracker Application
                     ========================================""");
-
-            System.out.println(currentUser.getUsername() + "'s Recap");
-            System.out.println("Current Date: " + year + "-" + month + "-" + day);
-            
-            System.out.println();
+            System.out.println(currentUser.getUsername() + "'s Progress for " + year + "-" + month + "-" + day);
+            // System.out.println(currentUser.get() +);
 
             System.out.println("""
                     ========================================
-                    
+                    Main Menu :
                     [1] Next Day
                     [2] Add Habit
                     [3] Edit Habit
@@ -291,6 +288,7 @@ public class Main {
                     case 1 -> CaloriesTrackerHabit();
                     case 2 -> addWaterIntakeHabit();
                     case 3 -> sleepHabit();
+                    case 4 -> ExerciseHabit();
                 }
             } else if (choice > builtInCount && choice < cancelOption) {
                 // User chose a custom habit template
@@ -394,9 +392,22 @@ public class Main {
     //     }
     // }
 
+    // GOAL SETTING
+    public void goalSetting() {
+        System.out.println("=== GOAL SETTING ===");
+        System.out.println("Current Goals :");
+        // Implement goal setting logic here
+        
+
+        System.out.println("=====================");
+        System.out.println("Which goals would you like to change?");
+        System.out.print("Option: ");
+        int option = s.nextInt();
+    }
+
     // Habit Specific Menu UI's
     public void CaloriesTrackerHabit() {
-        System.out.println("=== CALORIES TRACKER 🥗 ===");
+        System.out.println("\n=== CALORIES TRACKER 🥗 ===");
 
         // Ask for calorie goal
         System.out.println("Select your daily calorie goal:");
@@ -405,10 +416,10 @@ public class Main {
             2. 1800 kcal
             3. 2000 kcal
             4. 2500 kcal
-            5. Custom
-            """);
+            5. Custom""");
         System.out.print("Choice: ");
         int choice = s.nextInt();
+        System.out.println("");
 
         int calorieGoal = switch (choice) {
             case 1 -> 1500;
@@ -426,7 +437,7 @@ public class Main {
         };
 
         // Ask for current calorie intake
-        System.out.print("Enter the number of calories you've consumed today: ");
+        System.out.print("\nEnter the number of calories you've consumed today: ");
         int caloriesConsumed = s.nextInt();
 
         // Create tracker
