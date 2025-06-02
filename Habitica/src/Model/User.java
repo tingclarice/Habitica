@@ -2,6 +2,8 @@ package Model;
 
 import java.util.ArrayList;
 
+import Model.Habit;
+
 public class User {
     protected String username;
     protected String password;

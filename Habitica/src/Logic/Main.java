@@ -183,6 +183,14 @@ public class Main {
                     ========================================
                                 🌱 HABITICA 🌱
                         Health Habit Tracker Application
+                    ========================================""");
+
+            System.out.println(currentUser.getUsername() + "'s Recap");
+            System.out.println("Current Date: " + year + "-" + month + "-" + day);
+            
+            System.out.println();
+
+            System.out.println("""
                     ========================================
                     
                     [1] Next Day
@@ -208,7 +216,7 @@ public class Main {
                     case 4 -> deleteHabit();
                     case 5 -> createCustomHabit();
                     case 6 -> history();
-                    case 7 -> achievement();
+                    // case 7 -> achievement();
                     case 8 -> {
                         System.out.println("Logging out...");
                         currentUser = null;
@@ -289,11 +297,22 @@ public class Main {
                 int templateIndex = choice - builtInCount - 1;
                 CustomHabit template = customTemplates.get(templateIndex);
 
-                // Create a new CustomHabit from template and add to user's habits
+                // Ask for progress
+                System.out.printf("You selected: %s\n", template.getName());
+                System.out.printf("Goal: %d\n", template.getGoal());
+                System.out.print("Enter today's progress: ");
+                int progress = s.nextInt();
+                s.nextLine();
+
+                // Create a new CustomHabit and set progress
                 CustomHabit newCustomHabit = new CustomHabit(template.getName(), template.getDescription(), template.getGoal());
+                newCustomHabit.setProgress(progress);
                 currentUser.addHabit(newCustomHabit);
 
-                System.out.println("Custom Habit '" + newCustomHabit.getName() + "' added successfully!");
+                // Show result
+                System.out.println("✅ Custom Habit '" + newCustomHabit.getName() + "' added successfully!");
+                System.out.printf("Progress: %d / %d\n", newCustomHabit.getProgress(), newCustomHabit.getGoal());
+                System.out.println("Goal met: " + (newCustomHabit.goalMet() ? "✅ Yes" : "❌ No"));
             } else if (choice == cancelOption) {
                 System.out.println("Cancelled.");
             } else {
@@ -359,21 +378,21 @@ public class Main {
 
     public void history() {}
 
-    public void achievement() {
-        System.out.println("=== ACHIEVEMENTS 🏆 ===");
+    // public void achievement() {
+    //     System.out.println("=== ACHIEVEMENTS 🏆 ===");
         
-        if(habitCount == 0){
-            System.out.println("You have no achievements yet. Keep tracking your habits!");
-        } else if (habitCount == 1){
-            System.out.println("");
+    //     if(habitCount == 0){
+    //         System.out.println("You have no achievements yet. Keep tracking your habits!");
+    //     } else if (habitCount == 1){
+    //         System.out.println("");
             
-        }else {
-            for (int i = 0; i < habitCount && i < achievements.size(); i++) {
-                System.out.println("- " + achievements.get(i).getTitle());
-                System.out.println("  " + achievements.get(i).getDescription());
-            }
-        }
-    }
+    //     }else {
+    //         for (int i = 0; i < habitCount && i < achievements.size(); i++) {
+    //             System.out.println("- " + achievements.get(i).getTitle());
+    //             System.out.println("  " + achievements.get(i).getDescription());
+    //         }
+    //     }
+    // }
 
     // Habit Specific Menu UI's
     public void CaloriesTrackerHabit() {
@@ -421,6 +440,10 @@ public class Main {
         //     currentUser.getAchievements().add(
         //         new Achievement("Calorie Goal", "You met your calorie goal today!")
         //     );
+
+        // if(calorieGoal == caloriesTracker.getCaloriesConsumed()) {
+        //     habitCount++;
+        //     User.getAchievements().add(new Achievement());
         // }
     }
     
