@@ -9,6 +9,7 @@ import Model.Habit;
 // import Model.CustomHabit;
 import Model.DefaultHabit;
 import Model.WaterIntakeHabit;
+import Model.Achievement;
 import Model.CaloriesTracker;
 import Model.CustomHabit;
 import Model.SleepHabit;
@@ -16,6 +17,7 @@ import Model.ExerciseHabit;
 
 public class Main {
     private ArrayList<User> users = new ArrayList<>();
+    private ArrayList<Achievement> achievements = new ArrayList<>();
     private Scanner s = new Scanner(System.in);
     private LocalDate currentDate;
     private User currentUser = null;
@@ -23,6 +25,19 @@ public class Main {
     private int month;
     private int year; 
     private int habitCount = 0;
+
+    public Main() {
+        achievements.add(new Achievement("Just One Step", "Setiap perjalanan panjang dimulai dari satu langkah."));
+        achievements.add(new Achievement("Consistency is Key", "Konsistensi adalah kunci untuk mencapai tujuan."));
+        achievements.add(new Achievement("Healthy Mind, Healthy Body", "Jaga kesehatan mental dan fisikmu!"));
+        achievements.add(new Achievement("Progress Not Perfection", "Fokus pada kemajuan, bukan kesempurnaan."));
+        achievements.add(new Achievement("Small Wins", "Rayakan setiap kemenangan kecil dalam perjalananmu!"));
+        achievements.add(new Achievement("Goal Getter", "Setiap pencapaian dimulai dengan keputusan untuk mencoba."));
+        achievements.add(new Achievement("Habit Builder", "Bangun kebiasaan baik setiap hari!"));
+        achievements.add(new Achievement("Healthy Lifestyle", "Gaya hidup sehat adalah investasi terbaik untuk masa depanmu!"));
+        achievements.add(new Achievement("Consistency King", "Setiap hari adalah kesempatan baru untuk menjadi lebih baik."));
+        achievements.add(new Achievement("Mindful Living", "Hiduplah dengan kesadaran penuh dan nikmati setiap momen."));
+    }
 
     // STARTING SCREEN
     public void start() {
@@ -165,7 +180,10 @@ public class Main {
                     ========================================
                                 🌱 HABITICA 🌱
                         Health Habit Tracker Application
-                    ========================================
+                    ========================================""");
+            System.out.println("Calories Consumed Today: " + caloriesTracker.getCaloriesConsumed() + "/" + calorieGoal + " kcal");       
+            System.out.println("""
+                    
                     [1] Next Day
                     [2] Add Habit
                     [3] Edit Habit
@@ -173,7 +191,8 @@ public class Main {
                     [5] Create Custom Habit
                     [6] History
                     [7] Achievements
-                    [8] Log Out""");
+                    [8] Log Out
+                    """);
 
             System.out.print("Option: ");
 
@@ -201,7 +220,7 @@ public class Main {
                 s.nextLine(); // clear invalid input
             }
 
-        } while (input != 5);
+        } while (input != 8);
     }
 
     // DAY PROGRESSION
@@ -295,6 +314,7 @@ public class Main {
     customHabit.printDetails(); // Show details
 }
 
+    // HISTORY & ACHIEVEMENTS
 
     public void history() {}
 
@@ -304,8 +324,13 @@ public class Main {
         if(habitCount == 0){
             System.out.println("You have no achievements yet. Keep tracking your habits!");
         } else if (habitCount == 1){
-            System.out.println();
+            System.out.println("");
             
+        }else {
+            for (int i = 0; i < habitCount && i < achievements.size(); i++) {
+                System.out.println("- " + achievements.get(i).getTitle());
+                System.out.println("  " + achievements.get(i).getDescription());
+            }
         }
     }
 
@@ -359,6 +384,7 @@ public class Main {
 
         if(calorieGoal == caloriesTracker.getCaloriesConsumed()) {
             habitCount++;
+            User.getAchievements().add(new Achievement());
         }
     }
 
@@ -489,8 +515,11 @@ public class Main {
         System.out.println("✅ Water Intake Habit added successfully.");
         waterHabit.printDetails();
 
-        if(currentIntake >= waterHabit.getGoal()){
+        if(currentIntake >= waterHabit.getGoal()) {
             habitCount++;
         }
+        
     }
+
+    
 }

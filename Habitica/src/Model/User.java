@@ -1,19 +1,20 @@
 package Model;
 
 import java.util.ArrayList;
-import Model.Habit;
 
 public class User {
     protected String username;
     protected String password;
     protected ArrayList<Habit> habits;
     private ArrayList<CustomHabit> customHabitTemplates = new ArrayList<>();
+    private ArrayList<Achievement> achievements = new ArrayList<>();
     
     // Constructor
     public User(String username, String password) {
         this.username = username;
         this.password = password;
         this.habits = new ArrayList<>();
+        this.achievements = new ArrayList<>();
     }
 
     // Getters & Setters
@@ -86,5 +87,21 @@ public class User {
             System.out.printf("[%d] %s - %s (Goal: %d)\n", i + 1, ch.getName(), ch.getDescription(), ch.getGoal());
         }
     }
+
+    public ArrayList<Achievement> getAchievements() {
+        return achievements;
+    }
+    public void addAchievement(Achievement achievement) {
+        achievements.add(achievement);
+    }
+
+    public void countachievements() {
+    
+    }
+
+    public int getcompleteachievements(){
+        return achievements.size();
+    }
+    
     
 }
