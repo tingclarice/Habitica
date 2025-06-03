@@ -16,8 +16,6 @@ import Model.SleepHabit;
 import Model.ExerciseHabit;
 
 public class Main {
-
-    
     private ArrayList<User> users = new ArrayList<>();
     private ArrayList<Achievement> achievements = new ArrayList<>();
     private Scanner s = new Scanner(System.in);
@@ -91,6 +89,42 @@ public class Main {
             System.out.println("Invalid input. Please enter a number for the date.");
             s.nextLine(); // clear buffer
         }
+    }
+
+    // GOAL SETTING
+    System.out.println("\n=== GOAL SETTING ===");
+    System.out.println("Set your daily goals for default habits you can track:");
+    
+    try {
+            System.out.println("1. Calories Tracker - How many calories you want to consume each day? (e.g. 2000 kcal)");
+            day = s.nextInt();
+    } catch (InputMismatchException e) {
+        System.out.println("Invalid input. Please enter a number for the calories tracker.");
+        s.nextLine(); // clear buffer
+    }
+
+    try {
+        System.out.println("2. Water Intake Habit - How many liters of water you want to drink each day? (e.g. 2 liters)");
+        month = s.nextInt();
+    } catch (InputMismatchException e) {
+        System.out.println("Invalid input. Please enter a number for the water intake habit.");
+        s.nextLine(); // clear buffer
+    }
+
+    try {
+        System.out.println("3. Sleep Habit - How many hours of sleep you want to get each day? (e.g. 8 hours)");
+        year = s.nextInt();
+    } catch (InputMismatchException e) {
+        System.out.println("Invalid input. Please enter a number for the sleep habit.");
+        s.nextLine(); // clear buffer
+    }
+
+    try {
+        System.out.println("4. Exercise Habit - How many minutes of exercise you want to do each day? (e.g. 30 minutes)");
+        day = s.nextInt();
+    } catch (InputMismatchException e) {
+        System.out.println("Invalid input. Please enter a number for the exercise habit.");
+        s.nextLine(); // clear buffer
     }
 
         // START MENU
@@ -176,31 +210,63 @@ public class Main {
     // USER INTERFACE
     public void menu() {
         int input = 0;
+        String username = currentUser.getUsername();
+        String date = year + "-" + month + "-" + day;
+        String menuTitle = "🌱 HABITICA 🌱";
+        String progress = username + "'s Progress — " + date;
 
         do {
-            System.out.println("""
+            // Calculate the total box width
+            int boxWidth = 53;
 
-                    ========================================
-                                🌱 HABITICA 🌱
-                        Health Habit Tracker Application
-                    ========================================""");
-            System.out.println(currentUser.getUsername() + "'s Progress for " + year + "-" + month + "-" + day);
-            // System.out.println(currentUser.get() +);
+            // Top border
+            System.out.println("╔" + "═".repeat(boxWidth) + "╗");
 
-            System.out.println("""
-                    ========================================
-                    Main Menu :
-                    [1] Next Day
-                    [2] Add Habit
-                    [3] Edit Habit
-                    [4] Delete Habit
-                    [5] Create Custom Habit
-                    [6] History
-                    [7] Achievements
-                    [8] Log Out
-                    """);
+            // Centered title
+            printCenteredLine(" "+ menuTitle, boxWidth);
 
-            System.out.print("Option: ");
+            System.out.println("╠" + "═".repeat(boxWidth) + "╣");
+            for (Habit habit : currentUser.getHabits()) {
+                String status = String.format("%s: %d/%d %s",
+                    habit.getName(),
+                    habit.getProgress(),
+                    habit.getGoal(),
+                    habit.goalMet() ? "✅" : "❌");
+
+                // Shorten if too long
+                if (status.length() > boxWidth - 4) {
+                    status = status.substring(0, boxWidth - 7) + "...";
+                }
+
+                printCenteredLine(status, boxWidth);
+            }
+
+            System.out.println("╠" + "═".repeat(boxWidth) + "╣");
+
+            // Divider
+            System.out.println("╠" + "═".repeat(boxWidth) + "╣");
+
+            // Menu items
+            String[] menuItems = {
+                " [1] Next Day",
+                " [2] Add Habit",
+                " [3] Edit Habit",
+                " [4] Delete Habit",
+                " [5] Create Custom Habit",
+                " [6] History",
+                " [8] Log Out"
+            };
+
+            for (String item : menuItems) {
+                int padding = boxWidth - item.length() - 1; // 1 space after '║'
+                System.out.println("║ " + item + " ".repeat(padding) + "║");
+            }
+
+            // Bottom border
+            System.out.println("╚" + "═".repeat(boxWidth) + "╝");
+
+            // Input prompt
+            System.out.print("➡️  Option: ");
 
             try {
                 input = s.nextInt();
@@ -227,6 +293,13 @@ public class Main {
             }
 
         } while (input != 8);
+    }
+
+    // Helper method to print centered lines inside the box
+    public static void printCenteredLine(String content, int boxWidth) {
+        int leftPadding = (boxWidth - content.length()) / 2;
+        int rightPadding = boxWidth - leftPadding - content.length();
+        System.out.printf("║%" + (leftPadding + content.length()) + "s%" + rightPadding + "s║\n", content, "");
     }
 
     // DAY PROGRESSION

@@ -1,6 +1,7 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class User {
     protected String username;
@@ -8,6 +9,8 @@ public class User {
     protected ArrayList<Habit> habits;
     private ArrayList<CustomHabit> customHabitTemplates = new ArrayList<>();
     private ArrayList<Achievement> achievements = new ArrayList<>();
+    private HashMap<String, Integer> defaultHabitGoals = new HashMap<>();
+
     
     // Constructor
     public User(String username, String password) {
@@ -99,7 +102,17 @@ public class User {
         }
     }
     
-    
+    public void setDefaultGoal(String habitName, int goal) {
+        defaultHabitGoals.put(habitName, goal);
+    }
+
+    public int getDefaultGoal(String habitName) {
+        return defaultHabitGoals.getOrDefault(habitName, -1);
+    }
+
+    public boolean hasGoal(String habitName) {
+        return defaultHabitGoals.containsKey(habitName);
+    }
     
     
 }

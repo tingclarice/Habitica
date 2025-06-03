@@ -6,6 +6,8 @@ import java.util.List;
 public abstract class Habit {
     protected String name;
     protected String description;
+    protected int progress;
+    protected int goal;
     protected int streak;
 
     public Habit(String name, String description) {
@@ -38,6 +40,18 @@ public abstract class Habit {
         this.streak = streak;
     }
 
+    public int getProgress() {
+        return progress;
+    }
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+    public int getGoal() {
+        return goal;
+    }
+    public void setGoal(int goal) {
+        this.goal = goal;
+    }
     // Enforced method for subclasses
     public abstract boolean goalMet();
 
