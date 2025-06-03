@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.HashMap;
 
 import Model.User;
 import Model.Habit;
@@ -27,6 +28,10 @@ public class Main {
     private int month;
     private int year; 
     private int habitCount = 0;
+    private int calorieGoal = 2000; // Default calorie goal
+    private int waterGoal = 2; // Default water goal in liters
+    private int sleepGoal = 8; // Default sleep goal in hours
+    private int exerciseGoal = 30; // Default exercise goal in minutes
 
 
     public Main() {
@@ -148,6 +153,46 @@ public class Main {
         User newUser = new User(username, password);
         users.add(newUser);
         System.out.println("Sign-up successful! You can now log in.");
+
+        // GOAL SETTING
+        System.out.println("\n=== GOAL SETTING ===");
+        System.out.println("Set your daily goals for default habits you can track:");
+        
+        try {
+                System.out.println("1. Calories Tracker - How many calories you want to consume each day? (e.g. 2000 kcal)");
+                System.out.print("Input: ");
+                calorieGoal = s.nextInt();
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a number for the calories tracker.");
+            s.nextLine(); // clear buffer
+        }
+
+        try {
+            System.out.println("\n2. Water Intake Habit - How many liters of water you want to drink each day? (e.g. 2 liters)");
+            System.out.print("Input: ");
+            waterGoal = s.nextInt();
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a number for the water intake habit.");
+            s.nextLine(); // clear buffer
+        }
+
+        try {
+            System.out.println("\n3. Sleep Habit - How many hours of sleep you want to get each day? (e.g. 8 hours)");
+            System.out.print("Input: ");
+            sleepGoal = s.nextInt();
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a number for the sleep habit.");
+            s.nextLine(); // clear buffer
+        }
+
+        try {
+            System.out.println("\n4. Exercise Habit - How many minutes of exercise you want to do each day? (e.g. 30 minutes)");
+            System.out.print("Input: ");
+            exerciseGoal = s.nextInt();
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a number for the exercise habit.");
+            s.nextLine(); // clear buffer
+        }
     }
 
     public void logIn() {
@@ -363,21 +408,9 @@ public class Main {
         menu();
     }
 
-// <<<<<<< HEAD
-//     // Create the custom habit
-//     CustomHabit customHabit = new CustomHabit(name, description, goal);
-
-//     // (Optional) Add to a list of habits if you maintain one
-//     currentUser.addCustomHabitTemplate(customHabit); // Assuming habitList is a List<Habit> you maintain
-
-//     System.out.println("✅ Custom habit added successfully!");
-//     customHabit.printDetails(); // Show details
-// }
-
-//     // HISTORY & ACHIEVEMENTS
-
     public void history() {}
 
+<<<<<<< Updated upstream
     public void achievement() {
         if (currentUser.getAchievements().isEmpty()) {
             System.out.println("No achievements unlocked yet.");
@@ -448,6 +481,9 @@ public class Main {
         }
     }
 
+=======
+    
+>>>>>>> Stashed changes
     // GOAL SETTING
     public void goalSetting() {
         System.out.println("=== GOAL SETTING ===");
@@ -504,6 +540,7 @@ public class Main {
         System.out.println("Goal: " + dailyCalorieGoal + " kcal");
         System.out.println("Calories consumed: " + caloriesConsumed + " kcal");
         System.out.println("Goal met: " + (caloriesTracker.goalMet()));
+<<<<<<< Updated upstream
     
         // if (caloriesTracker.goalMet()) {
         //     currentUser.getAchievements().add(
@@ -513,6 +550,8 @@ public class Main {
         if(dailyCalorieGoal == caloriesTracker.getCaloriesConsumed()) {
             habitCount++;
         }
+=======
+>>>>>>> Stashed changes
     }
     
 
@@ -667,5 +706,62 @@ public class Main {
         
     }
 
-    
+    public void checkAchievement(){
+        if(currentUser == null) return;
+
+        // Just One Step: Jika user memiliki setidaknya 1 habit
+        if (currentUser.getHabits().size() >= 1) {
+            currentUser.addAchievement(achievements.get("JustOneStep"));
+        }
+
+        // Consistency is Key: Jika user menyelesaikan 3 habit dalam sehari
+        if (habitCount >= 3) {
+            currentUser.addAchievement(achievements.get("ConsistencyIsKey"));
+        }
+
+        // Healthy Mind, Healthy Body: Jika user menyelesaikan 5 habit dalam sehari
+        if (habitCount >= 5) {
+            currentUser.addAchievement(achievements.get("HealthyMindHealthyBody"));
+        }
+
+        // Progress Not Perfection: Jika user minum 2 liter air
+        WaterIntakeHabit waterHabit = currentUser.getWaterIntake();
+        if (waterHabit != null && waterHabit.getWaterIntake() >= 2) {
+            currentUser.addAchievement(achievements.get("ProgressNotPerfection"));
+        }
+
+        // Small Wins: Jika user tidur 8 jam
+        SleepHabit sleepHabit = currentUser.getSleepHabit();
+        if (sleepHabit != null && sleepHabit.getSleepDuration() >= 8) {
+            currentUser.addAchievement(achievements.get("SmallWins"));
+        }
+        
+        // Goal Getter: Jika user berolahraga 30 menit
+        ExerciseHabit exerciseHabit = currentUser.getExerciseHabit();
+        if (exerciseHabit != null && exerciseHabit.getDuration() >= 30) {
+            currentUser.addAchievement(achievements.get("GoalGetter"));
+        }
+
+        // Habit Builder: Jika user memenuhi target kalori (goalMet())
+        CaloriesTracker caloriesTracker = currentUser.getCaloriesTracker();
+        if (caloriesTracker != null && caloriesTracker.goalMet()) {
+            currentUser.addAchievement(achievements.get("HabitBuilder"));
+        }
+
+        // Healthy Lifestyle: Jika user minum 3 liter air
+        if (waterHabit != null && waterHabit.getWaterIntake() >= 3) {
+            currentUser.addAchievement(achievements.get("HealthyLifestyle"));
+        }
+
+        // Consistency King: Jika user berolahraga 1 jam
+        if (exerciseHabit != null && exerciseHabit.getDuration() >= 60) {
+            currentUser.addAchievement(achievements.get("ConsistencyKing"));
+        }
+        
+        // Mindful Living: Jika user membuat setidaknya satu custom habit template
+        if (currentUser.getCustomHabitTemplates().size() > 0) {
+            currentUser.addAchievement(achievements.get("MindfulLiving"));
+        }
+    }
 }
+

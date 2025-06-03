@@ -7,7 +7,13 @@ public class User {
     protected String password;
     protected ArrayList<Habit> habits;
     private ArrayList<CustomHabit> customHabitTemplates = new ArrayList<>();
+<<<<<<< Updated upstream
     private HashMap< String, Achievement> achievements = new HashMap<>();
+=======
+    private HashMap<String, Achievement> achievements = new HashMap<>();
+    private HashMap<String, Integer> defaultHabitGoals = new HashMap<>();
+
+>>>>>>> Stashed changes
     
     // Constructor
     public User(String username, String password) {
@@ -88,6 +94,45 @@ public class User {
         }
     }
 
+<<<<<<< Updated upstream
+    public HashMap<String, Achievement> getAchievementsMap() {
+        return achievements;
+    }
+    
+    public void addAchievement(Achievement achievement) {
+        if (!achievements.containsKey(achievement.getTitle())) {
+            achievements.put(achievement.getTitle(), achievement);
+        } else {
+            System.out.println("Achievement already exists.");
+        }
+    }
+    
+    public Achievement getTitle(String title) {
+        return achievements.get(title);
+=======
+    public HashMap<String, Achievement> getAchievements() {
+        return achievements;
+    }
+    
+    public void setDefaultGoal(String habitName, int goal) {
+        defaultHabitGoals.put(habitName, goal);
+>>>>>>> Stashed changes
+    }
+    // tidak membutuhkan setter karena sifat datanya tetap
+
+    public WaterIntakeHabit getWaterIntake() {
+        for (Habit habit : habits) {
+            if (habit instanceof WaterIntakeHabit) {
+                WaterIntakeHabit waterHabit = (WaterIntakeHabit) habit;
+                System.out.println("Water Intake Habit: " + waterHabit.getName() + ", Intake: " + waterHabit.getWaterIntake() + " liters, Goal: " + waterHabit.getGoal() + " liters");
+            }
+        }
+        return null;
+    }
+    
+<<<<<<< Updated upstream
+=======
+    // Achievement management
     public HashMap<String, Achievement> getAchievementsMap() {
         return achievements;
     }
@@ -115,6 +160,7 @@ public class User {
         return null;
     }
     
+>>>>>>> Stashed changes
     public SleepHabit getSleepHabit() {
         for (Habit habit : habits) {
             if (habit instanceof SleepHabit) {
@@ -143,3 +189,5 @@ public class User {
         return null;
     }
 }
+
+
