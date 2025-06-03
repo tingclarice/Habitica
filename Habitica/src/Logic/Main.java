@@ -287,6 +287,12 @@ public class Main {
     // DAY PROGRESSION
     public void nextDay() {
         try {
+            System.out.println("Are you sure you want to progress to the next day? (yes/no)");
+            String confirm = s.next()+s.nextLine().toLowerCase();
+            if (!confirm.equals("yes")) {
+                System.out.println("Cancelled. Returning to main menu.");
+                return;
+            }
             System.out.println("\n=== PROGRESS TO NEXT DAY ===");
             // Create LocalDate from current values
             currentDate = LocalDate.of(year, month, day);
