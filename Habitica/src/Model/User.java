@@ -1,20 +1,20 @@
 package Model;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class User {
     protected String username;
     protected String password;
     protected ArrayList<Habit> habits;
     private ArrayList<CustomHabit> customHabitTemplates = new ArrayList<>();
-    private ArrayList<Achievement> achievements = new ArrayList<>();
+    private HashMap< String, Achievement> achievements = new HashMap<>();
     
     // Constructor
     public User(String username, String password) {
         this.username = username;
         this.password = password;
         this.habits = new ArrayList<>();
-        this.achievements = new ArrayList<>();
+        this.achievements = new HashMap<>();
     }
 
     // Getters & Setters
@@ -88,18 +88,58 @@ public class User {
         }
     }
 
-    public ArrayList<Achievement> getAchievements() {
+    public HashMap<String, Achievement> getAchievementsMap() {
         return achievements;
     }
     
     public void addAchievement(Achievement achievement) {
-        if (!achievements.contains(achievement)) {
-            achievements.add(achievement);
-            System.out.println("🎉 Achievement unlocked: " + achievement.getAchievement());
+        if (!achievements.containsKey(achievement.getTitle())) {
+            achievements.put(achievement.getTitle(), achievement);
+        } else {
+            System.out.println("Achievement already exists.");
         }
     }
     
+    public Achievement getTitle(String title) {
+        return achievements.get(title);
+    }
+    // tidak membutuhkan setter karena sifat datanya tetap
+
+    public WaterIntakeHabit getWaterIntake() {
+        for (Habit habit : habits) {
+            if (habit instanceof WaterIntakeHabit) {
+                WaterIntakeHabit waterHabit = (WaterIntakeHabit) habit;
+                System.out.println("Water Intake Habit: " + waterHabit.getName() + ", Intake: " + waterHabit.getWaterIntake() + " liters, Goal: " + waterHabit.getGoal() + " liters");
+            }
+        }
+        return null;
+    }
     
-    
-    
+    public SleepHabit getSleepHabit() {
+        for (Habit habit : habits) {
+            if (habit instanceof SleepHabit) {
+                SleepHabit sleepHabit = (SleepHabit) habit;
+                System.out.println("Sleep Habit: " + sleepHabit.getName() + ", Duration: " + sleepHabit.getSleepDuration() + " hours, Quality: " + sleepHabit.getSleepQuality() + ", Target: " + sleepHabit.getTargetSleepDuration() + " hours");
+            }
+        }
+        return null;
+    }
+    public ExerciseHabit getExerciseHabit() {
+        for (Habit habit : habits) {
+            if (habit instanceof ExerciseHabit) {
+                ExerciseHabit exerciseHabit = (ExerciseHabit) habit;
+                System.out.println("Exercise Habit: " + exerciseHabit.getName() + ", Duration: " + exerciseHabit.getDuration() + " minutes, Type: " + exerciseHabit.getType());
+            }
+        }
+        return null;
+    }
+    public CaloriesTracker getCaloriesTracker() {
+        for (Habit habit : habits) {
+            if (habit instanceof CaloriesTracker) {
+                CaloriesTracker caloriesHabit = (CaloriesTracker) habit;
+                System.out.println("Calories Tracker: " + caloriesHabit.getName() + ", Calories Consumed: " + caloriesHabit.getCaloriesConsumed() + ", Goal: " + caloriesHabit.getGoal() + " calories");
+            }
+        }
+        return null;
+    }
 }

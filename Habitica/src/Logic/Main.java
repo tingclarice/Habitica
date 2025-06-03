@@ -2,6 +2,7 @@ import java.util.InputMismatchException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import Model.User;
@@ -13,13 +14,12 @@ import Model.Achievement;
 import Model.CaloriesTracker;
 import Model.CustomHabit;
 import Model.SleepHabit;
-import Model.ExerciseHabit;
-
+import Model.ExerciseHabit; 
 public class Main {
 
     
     private ArrayList<User> users = new ArrayList<>();
-    private ArrayList<Achievement> achievements = new ArrayList<>();
+    private HashMap<String, Achievement> achievements = new HashMap<>();
     private Scanner s = new Scanner(System.in);
     private LocalDate currentDate;
     private User currentUser = null;
@@ -28,17 +28,18 @@ public class Main {
     private int year; 
     private int habitCount = 0;
 
+
     public Main() {
-        achievements.add(new Achievement("Just One Step", "Setiap perjalanan panjang dimulai dari satu langkah."));
-        achievements.add(new Achievement("Consistency is Key", "Konsistensi adalah kunci untuk mencapai tujuan."));
-        achievements.add(new Achievement("Healthy Mind, Healthy Body", "Jaga kesehatan mental dan fisikmu!"));
-        achievements.add(new Achievement("Progress Not Perfection", "Fokus pada kemajuan, bukan kesempurnaan."));
-        achievements.add(new Achievement("Small Wins", "Rayakan setiap kemenangan kecil dalam perjalananmu!"));
-        achievements.add(new Achievement("Goal Getter", "Setiap pencapaian dimulai dengan keputusan untuk mencoba."));
-        achievements.add(new Achievement("Habit Builder", "Bangun kebiasaan baik setiap hari!"));
-        achievements.add(new Achievement("Healthy Lifestyle", "Gaya hidup sehat adalah investasi terbaik untuk masa depanmu!"));
-        achievements.add(new Achievement("Consistency King", "Setiap hari adalah kesempatan baru untuk menjadi lebih baik."));
-        achievements.add(new Achievement("Mindful Living", "Hiduplah dengan kesadaran penuh dan nikmati setiap momen."));
+        achievements.put("JustOneStep", new Achievement("Just One Step", "Setiap perjalanan panjang dimulai dari satu langkah."));
+        achievements.put("ConsistencyIsKey", new Achievement("Consistency is Key", "Konsistensi adalah kunci untuk mencapai tujuan."));
+        achievements.put("HealthyMindHealthyBody", new Achievement("Healthy Mind, Healthy Body", "Jaga kesehatan mental dan fisikmu!"));
+        achievements.put("ProgressNotPerfection", new Achievement("Progress Not Perfection", "Fokus pada kemajuan, bukan kesempurnaan."));
+        achievements.put("SmallWins", new Achievement("Small Wins", "Rayakan setiap kemenangan kecil dalam perjalananmu!"));
+        achievements.put("GoalGetter", new Achievement("Goal Getter", "Setiap pencapaian dimulai dengan keputusan untuk mencoba."));
+        achievements.put("HabitBuilder", new Achievement("Habit Builder", "Bangun kebiasaan baik setiap hari!"));
+        achievements.put("HealthyLifestyle", new Achievement("Healthy Lifestyle", "Gaya hidup sehat adalah investasi terbaik untuk masa depanmu!"));
+        achievements.put("ConsistencyKing", new Achievement("Consistency King", "Setiap hari adalah kesempatan baru untuk menjadi lebih baik."));
+        achievements.put("MindfulLiving", new Achievement("Mindful Living", "Hiduplah dengan kesadaran penuh dan nikmati setiap momen."));
     }
 
     // STARTING SCREEN
@@ -185,7 +186,7 @@ public class Main {
                         Health Habit Tracker Application
                     ========================================""");
             System.out.println(currentUser.getUsername() + "'s Progress for " + year + "-" + month + "-" + day);
-            // System.out.println(currentUser.get() +);
+            // System.out.println(currentUser.getCaloriesTracker() + "/" + currentUser.getCaloriesTracker().getGoal() + " kcal");
 
             System.out.println("""
                     ========================================
@@ -213,7 +214,7 @@ public class Main {
                     case 4 -> deleteHabit();
                     case 5 -> createCustomHabit();
                     case 6 -> history();
-                    // case 7 -> achievement();
+                    case 7 -> achievement();
                     case 8 -> {
                         System.out.println("Logging out...");
                         currentUser = null;
@@ -242,6 +243,7 @@ public class Main {
             year = nextDate.getYear();
             month = nextDate.getMonthValue();
             day = nextDate.getDayOfMonth();
+            habitCount = 0; // Reset habit count for the new day
             
             System.out.println("Progressed to the next day: " + nextDate);
         } catch (DateTimeException e) {
@@ -376,21 +378,75 @@ public class Main {
 
     public void history() {}
 
-    // public void achievement() {
-    //     System.out.println("=== ACHIEVEMENTS 🏆 ===");
+    public void achievement() {
+        if (currentUser.getAchievements().isEmpty()) {
+            System.out.println("No achievements unlocked yet.");
+        } else {
+            System.out.println("Your Achievements:");
+            for (Achievement achievement : currentUser.getAchievements()) {
+                System.out.println(achievement);
+            }
+        }        
+    }
+    
+
+    public void checkAchievement(){
+        if(currentUser == null) return;
+
+        // Just One Step: Jika user memiliki setidaknya 1 habit
+        if (currentUser.getHabits().size() >= 1) {
+            currentUser.addAchievement(achievements.get("JustOneStep"));
+        }
+
+        // Consistency is Key: Jika user menyelesaikan 3 habit dalam sehari
+        if (habitCount >= 3) {
+            currentUser.addAchievement(achievements.get("ConsistencyIsKey"));
+        }
+
+        // Healthy Mind, Healthy Body: Jika user menyelesaikan 5 habit dalam sehari
+        if (habitCount >= 5) {
+            currentUser.addAchievement(achievements.get("HealthyMindHealthyBody"));
+        }
+
+        // Progress Not Perfection: Jika user minum 2 liter air
+        WaterIntakeHabit waterHabit = currentUser.getWaterIntake();
+        if (waterHabit != null && waterHabit.getWaterIntake() >= 2) {
+            currentUser.addAchievement(achievements.get("ProgressNotPerfection"));
+        }
+
+        // Small Wins: Jika user tidur 8 jam
+        SleepHabit sleepHabit = currentUser.getSleepHabit();
+        if (sleepHabit != null && sleepHabit.getSleepDuration() >= 8) {
+            currentUser.addAchievement(achievements.get("SmallWins"));
+        }
         
-    //     if(habitCount == 0){
-    //         System.out.println("You have no achievements yet. Keep tracking your habits!");
-    //     } else if (habitCount == 1){
-    //         System.out.println("");
-            
-    //     }else {
-    //         for (int i = 0; i < habitCount && i < achievements.size(); i++) {
-    //             System.out.println("- " + achievements.get(i).getTitle());
-    //             System.out.println("  " + achievements.get(i).getDescription());
-    //         }
-    //     }
-    // }
+        // Goal Getter: Jika user berolahraga 30 menit
+        ExerciseHabit exerciseHabit = currentUser.getExerciseHabit();
+        if (exerciseHabit != null && exerciseHabit.getDuration() >= 30) {
+            currentUser.addAchievement(achievements.get("GoalGetter"));
+        }
+
+        // Habit Builder: Jika user memenuhi target kalori (goalMet())
+        CaloriesTracker caloriesTracker = currentUser.getCaloriesTracker();
+        if (caloriesTracker != null && caloriesTracker.goalMet()) {
+            currentUser.addAchievement(achievements.get("HabitBuilder"));
+        }
+
+        // Healthy Lifestyle: Jika user minum 3 liter air
+        if (waterHabit != null && waterHabit.getWaterIntake() >= 3) {
+            currentUser.addAchievement(achievements.get("HealthyLifestyle"));
+        }
+
+        // Consistency King: Jika user berolahraga 1 jam
+        if (exerciseHabit != null && exerciseHabit.getDuration() >= 60) {
+            currentUser.addAchievement(achievements.get("ConsistencyKing"));
+        }
+        
+        // Mindful Living: Jika user membuat setidaknya satu custom habit template
+        if (currentUser.getCustomHabitTemplates().size() > 0) {
+            currentUser.addAchievement(achievements.get("MindfulLiving"));
+        }
+    }
 
     // GOAL SETTING
     public void goalSetting() {
@@ -454,10 +510,9 @@ public class Main {
         //         new Achievement("Calorie Goal", "You met your calorie goal today!")
         //     );
 
-        // if(calorieGoal == caloriesTracker.getCaloriesConsumed()) {
-        //     habitCount++;
-        //     User.getAchievements().add(new Achievement());
-        // }
+        if(dailyCalorieGoal == caloriesTracker.getCaloriesConsumed()) {
+            habitCount++;
+        }
     }
     
 
@@ -545,7 +600,7 @@ public class Main {
         System.out.print("Enter your exercise duration (in minutes): ");
         int duration = s.nextInt();
         System.out.println ("Enter your exercise type (e.g., Cardio, Strength): ");
-        String type = s.nextLine();
+        String type = s.nextLine() + s.next();
         // System.out.print("Enter your exercise frequency (e.g., Daily, Weekly): ");
         // String exerciseFrequency = s.nextLine();
 
@@ -561,9 +616,9 @@ public class Main {
         System.out.println("Type: " + exerciseHabit.getType());
         System.out.println("Habit added successfully!");
 
-        // if(exerciseDuration >= exerciseHabit.getTargetduration()) {
-        //     habitCount++;
-        // }
+        if(duration >= exerciseHabit.getTargetduration()) {
+            habitCount++;
+        }
     }
 
     public void addWaterIntakeHabit() {
@@ -606,9 +661,9 @@ public class Main {
         System.out.println("✅ Water Intake Habit added successfully.");
         waterHabit.printDetails();
 
-        // if(currentIntake >= waterHabit.getGoal()) {
-        //     habitCount++;
-        // }
+        if(waterIntake >= waterHabit.getGoal()) {
+            habitCount++;
+        }
         
     }
 

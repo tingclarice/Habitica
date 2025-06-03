@@ -17,9 +17,8 @@ public class WaterIntakeHabit extends DefaultHabit {
     public int getWaterIntake() {
         return waterIntake;
     }
-    
-    public int getWaterInTake(){
-        return waterIntake;
+    public void setWaterIntake(int waterIntake) {
+        this.waterIntake = waterIntake;
     }
 
     public int getGoal() {
