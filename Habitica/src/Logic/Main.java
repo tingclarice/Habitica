@@ -638,11 +638,20 @@ public class Main {
         
         System.out.print("Enter your exercise duration (in minutes): ");
         int duration = s.nextInt();
+<<<<<<< Updated upstream
         System.out.println ("Enter your exercise type (e.g., Cardio, Strength): ");
         String type = s.nextLine() + s.next();
         // System.out.print("Enter your exercise frequency (e.g., Daily, Weekly): ");
         // String exerciseFrequency = s.nextLine();
 
+=======
+        s.nextLine(); // clear newline setelah nextInt()
+    
+        System.out.print("Enter your exercise type (e.g., Cardio, Strength Training): ");
+        
+        String type = s.nextLine();
+    
+>>>>>>> Stashed changes
         ExerciseHabit exerciseHabit = new ExerciseHabit(
             targetduration,
             duration, 
