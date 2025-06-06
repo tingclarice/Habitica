@@ -28,15 +28,19 @@ public class Main {
     private int day;
     private int month;
     private int year; 
-    private int habitCount = 0;
-    private int calorieGoal = 2000; // Default calorie goal
-    private int waterGoal = 2; // Default water goal in liters
-    private int sleepGoal = 8; // Default sleep goal in hours
-    private int exerciseGoal = 30; // Default exercise goal in minutes
+    private int habitCount;
+    private int calorieGoal ; // Default calorie goal
+    private int waterGoal; // Default water goal in liters
+    private int sleepGoal; // Default sleep goal in hours
+    private int exerciseGoal; // Default exercise goal in minutes
     int todayWaterIntake = 0;
     int todayCalories = 0;
     int todaySleepDuration = 0;
     int todayExerciseDuration = 0;
+    int tmp_calorieGoal = calorieGoal;
+    int tmp_waterGoal = waterGoal;
+    int tmp_sleepGoal = sleepGoal;
+    int tmp_exerciseGoal = exerciseGoal;
 
 
     public Main() {
@@ -172,6 +176,7 @@ public class Main {
                 System.out.println("1. Calories Tracker - How many calories you want to consume each day? (e.g. 2000 kcal)");
                 System.out.print("Input: ");
                 calorieGoal = s.nextInt();
+                tmp_calorieGoal = calorieGoal; // Save the initial goal
         } catch (InputMismatchException e) {
             System.out.println("Invalid input. Please enter a number for the calories tracker.");
             s.nextLine(); // clear buffer
@@ -181,6 +186,7 @@ public class Main {
             System.out.println("\n2. Water Intake Habit - How many liters of water you want to drink each day? (e.g. 2 liters)");
             System.out.print("Input: ");
             waterGoal = s.nextInt();
+            tmp_waterGoal = waterGoal; // Save the initial goal
         } catch (InputMismatchException e) {
             System.out.println("Invalid input. Please enter a number for the water intake habit.");
             s.nextLine(); // clear buffer
@@ -190,6 +196,7 @@ public class Main {
             System.out.println("\n3. Sleep Habit - How many hours of sleep you want to get each day? (e.g. 8 hours)");
             System.out.print("Input: ");
             sleepGoal = s.nextInt();
+            tmp_sleepGoal = sleepGoal; // Save the initial goal
         } catch (InputMismatchException e) {
             System.out.println("Invalid input. Please enter a number for the sleep habit.");
             s.nextLine(); // clear buffer
@@ -199,6 +206,7 @@ public class Main {
             System.out.println("\n4. Exercise Habit - How many minutes of exercise you want to do each day? (e.g. 30 minutes)");
             System.out.print("Input: ");
             exerciseGoal = s.nextInt();
+            tmp_exerciseGoal = exerciseGoal; // Save the initial goal
         } catch (InputMismatchException e) {
             System.out.println("Invalid input. Please enter a number for the exercise habit.");
             s.nextLine(); // clear buffer
@@ -321,6 +329,12 @@ public class Main {
         todayCalories = 0;
         todaySleepDuration = 0;
         todayExerciseDuration = 0;
+
+        calorieGoal = tmp_calorieGoal; 
+        waterGoal = tmp_waterGoal; // Reset to default
+        sleepGoal = tmp_sleepGoal; // Reset to default
+        exerciseGoal = tmp_exerciseGoal; // Reset to default
+        // Reset to default
     }
 
     // HABIT MANAGEMENT
@@ -518,6 +532,15 @@ public class Main {
         int option = s.nextInt();
     }
 
+    // private void initializeDailyGoals() {
+    //     if (currentUser != null) {
+    //         this.dailyCalorieGoal = currentUser.getCalorieGoal();
+    //         this.dailyWaterGoal = currentUser.getWaterIntakeGoal();
+    //         this.dailySleepGoal = currentUser.getSleepGoal();
+    //         this.dailyExerciseGoal = currentUser.getExerciseGoal();
+    //     }
+    // }
+
     // Habit Specific Menu UI's
     public void CaloriesTrackerHabit() {
         System.out.println("\n=== CALORIES TRACKER 🥗 ===");
@@ -558,7 +581,8 @@ public class Main {
                 yield 2000;
             }
         };
-        calorieGoal = dailyCalorieGoal; // Update the calorieGoal variable
+ 
+        calorieGoal = dailyCalorieGoal;
     }
         // Ask for current calorie intake
         System.out.print("\nEnter the number of calories you've consumed today: ");
@@ -619,6 +643,7 @@ public class Main {
                 yield 8;
             }
         };
+    
         sleepGoal = targetSleepDuration; // Update the sleepGoal variable
     }
     
@@ -641,7 +666,7 @@ public class Main {
         System.out.println("Duration: " + sleepHabit.getSleepDuration() + " jam");
         System.out.println("Quality: " + sleepHabit.getSleepQuality());
         System.out.println("Habit added successfully!");
-        this.todaySleepDuration += targetSleepDuration;
+        this.todaySleepDuration += sleepDuration;
 
 
         if(this.todaySleepDuration >= targetSleepDuration) { // Gunakan this.todayWaterIntake untuk pengecekan
@@ -690,7 +715,8 @@ public class Main {
                     yield 60;
                 }
             };
-            exerciseGoal = targetduration; // Update the exerciseGoal variable
+
+           exerciseGoal = targetduration; // Update the exerciseGoal variable
         }
             
         System.out.print("Enter your exercise duration (in minutes): ");
@@ -717,7 +743,7 @@ public class Main {
         System.out.println("Type: " + exerciseHabit.getType());
         System.out.println("Habit added successfully!");
     
-        this.todayExerciseDuration += targetduration;
+        this.todayExerciseDuration += duration;
 
 
         if(this.todayExerciseDuration >= targetduration) { // Gunakan this.todayWaterIntake untuk pengecekan
@@ -759,6 +785,7 @@ public class Main {
                 yield s.nextInt();
             }
         };
+        // Save the previous goal
         waterGoal = goal; // Update the waterGoal variable
     }
 
