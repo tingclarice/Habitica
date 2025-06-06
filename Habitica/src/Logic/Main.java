@@ -256,9 +256,10 @@ public class Main {
                     [1] Next Day
                     [2] Add Habit Progress
                     [3] Create Custom Habit
-                    [4] History
-                    [5] Achievements
-                    [6] Log Out
+                    [4] Edit Goal
+                    [5] History
+                    [6] Achievements
+                    [7] Log Out
                     """);
 
             System.out.print("Option: ");
@@ -271,9 +272,10 @@ public class Main {
                     case 1 -> nextDay();
                     case 2 -> addHabitMenu();
                     case 3 -> createCustomHabit();
-                    case 4 -> history();
-                    case 5 -> achievement();
-                    case 6 -> {
+                    // case 4 -> editGoal();
+                    case 5 -> history();
+                    case 6 -> achievement();
+                    case 7 -> {
                         System.out.println("Logging out...");
                         currentUser = null;
                     }
@@ -353,7 +355,7 @@ public class Main {
             choice = s.nextInt();
             s.nextLine(); // clear newline
 
-            int builtInCount = 3;
+            int builtInCount = 4;
             int cancelOption = builtInCount + customTemplates.size() + 1;
 
             if (choice >= 1 && choice <= builtInCount) {
@@ -556,6 +558,7 @@ public class Main {
                 yield 2000;
             }
         };
+        calorieGoal = dailyCalorieGoal; // Update the calorieGoal variable
     }
         // Ask for current calorie intake
         System.out.print("\nEnter the number of calories you've consumed today: ");
@@ -616,6 +619,7 @@ public class Main {
                 yield 8;
             }
         };
+        sleepGoal = targetSleepDuration; // Update the sleepGoal variable
     }
     
         System.out.print("Enter today's sleep duration (in hours): ");
@@ -686,6 +690,7 @@ public class Main {
                     yield 60;
                 }
             };
+            exerciseGoal = targetduration; // Update the exerciseGoal variable
         }
             
         System.out.print("Enter your exercise duration (in minutes): ");
@@ -754,6 +759,7 @@ public class Main {
                 yield s.nextInt();
             }
         };
+        waterGoal = goal; // Update the waterGoal variable
     }
 
         System.out.print("Enter your current water intake (in liters): ");
