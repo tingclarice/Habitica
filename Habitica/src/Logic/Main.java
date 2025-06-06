@@ -519,7 +519,17 @@ public class Main {
     // Habit Specific Menu UI's
     public void CaloriesTrackerHabit() {
         System.out.println("\n=== CALORIES TRACKER 🥗 ===");
-
+        System.out.println("Do you want to use the default calorie goal or set a custom one?");
+        System.out.println("1. Use default");
+        System.out.println("2. Set custom calorie goal");
+        System.out.print("Option: ");
+        int option = s.nextInt();
+        int dailyCalorieGoal = calorieGoal; 
+        s.nextLine(); // clear newline
+        if(option == 1){
+            System.out.println("You have chosen to use the default calorie goal of " + calorieGoal + " kcal.");
+        
+    }else{
         // Ask for calorie goal
         System.out.println("Select your daily calorie goal:");
         System.out.println("""
@@ -532,7 +542,7 @@ public class Main {
         int choice = s.nextInt();
         System.out.println("");
 
-        int dailyCalorieGoal = switch (choice) {
+        dailyCalorieGoal = switch (choice) {
             case 1 -> 1500;
             case 2 -> 1800;
             case 3 -> 2000;
@@ -546,7 +556,7 @@ public class Main {
                 yield 2000;
             }
         };
-
+    }
         // Ask for current calorie intake
         System.out.print("\nEnter the number of calories you've consumed today: ");
         int caloriesConsumed = s.nextInt();
@@ -560,14 +570,27 @@ public class Main {
         System.out.println("Calories consumed: " + caloriesConsumed + " kcal");
         System.out.println("Goal met: " + (caloriesTracker.goalMet()));
 
-        if(dailyCalorieGoal == caloriesTracker.getCaloriesConsumed()) {
+        this.todayCalories += caloriesConsumed;
+
+
+        if(this.todayCalories >= caloriesConsumed) { // Gunakan this.todayWaterIntake untuk pengecekan
             habitCount++;
-        }
+    }
     }
     
 
     public void sleepHabit() {
         System.out.println("=== SLEEP HABIT 💤 ===");
+        System.out.println("\nDo you want to use the default sleep duration or set a custom one?");
+        System.out.println("1. Use default");
+        System.out.println("2. Set custom sleep duration");
+        System.out.print("Option: ");
+        int option = s.nextInt();
+        s.nextLine(); // clear newline
+        int targetSleepDuration = sleepGoal; // Default to 8 hours
+        if (option ==1){
+            System.out.println("Your default sleep duration is set to " + targetSleepDuration + " hours.");
+        }else {
         System.out.println("Enter Your Sleep Duration Target");
         System.out.println("""
                 1. 6 hours
@@ -579,7 +602,7 @@ public class Main {
         System.out.print("Select a target: ");
         int target = s.nextInt();
         s.nextLine(); // clear newline
-        int targetSleepDuration = switch (target) {
+        targetSleepDuration = switch (target) {
             case 1 -> 6;
             case 2 -> 7;
             case 3 -> 8;
@@ -593,6 +616,7 @@ public class Main {
                 yield 8;
             }
         };
+    }
     
         System.out.print("Enter today's sleep duration (in hours): ");
         int sleepDuration = s.nextInt();
@@ -613,66 +637,103 @@ public class Main {
         System.out.println("Duration: " + sleepHabit.getSleepDuration() + " jam");
         System.out.println("Quality: " + sleepHabit.getSleepQuality());
         System.out.println("Habit added successfully!");
-        if(sleepDuration >= sleepHabit.getTargetSleepDuration()) {
+        this.todaySleepDuration += sleepDuration;
+
+
+        if(this.todaySleepDuration >= sleepDuration) { // Gunakan this.todayWaterIntake untuk pengecekan
             habitCount++;
-        }
+    }
     }
 
     public void ExerciseHabit() {
+        int targetduration; // Deklarasi variabel
         System.out.println("=== EXERCISE HABIT 🚴🏻 ===");
-        System.out.println("Enter Your Exercise Duration Target");
-        System.out.println("""
-                1. 30 minutes
-                2. 1 hour
-                3. 1.5 hours
-                4. 2 hours
-                5. Other
-                """);
-        System.out.print("Select a target: ");
-        int target = s.nextInt();
-        s.nextLine();
-
-        int targetduration= switch (target) {
-            case 1 -> 30;
-            case 2 -> 60;
-            case 3 -> 90;
-            case 4 -> 120;
-            case 5 -> {
-                System.out.print("Enter your custom exercise target (in minutes): ");
-                yield s.nextInt();
-            }
-            default -> {
-                System.out.println("Invalid choice. Defaulting to 60 minutes.");
-                yield 60;
-            }
-        };
-        
+        System.out.println("\nDo you want to use the default exercise duration or set a custom one?");
+        System.out.println("1. Use default exercise duration (" + exerciseGoal + " minutes)");
+        System.out.println("2. Set custom exercise duration");
+        System.out.print("Option: ");
+        int option = s.nextInt();
+        s.nextLine(); // clear newline
+    
+        if (option == 1) {
+            System.out.println("You have chosen to use the default exercise duration.");
+            // PERBAIKAN: Inisialisasi targetduration dengan goal default
+            targetduration = exerciseGoal; 
+        } else {
+            System.out.println("Enter Your Exercise Duration Target");
+            System.out.println("""
+                    1. 30 minutes
+                    2. 60 minutes (1 hour)
+                    3. 90 minutes (1.5 hours)
+                    4. 120 minutes (2 hours)
+                    5. Other
+                    """);
+            System.out.print("Select a target: ");
+            int target = s.nextInt();
+            s.nextLine(); // clear newline
+    
+            targetduration = switch (target) {
+                case 1 -> 30;
+                case 2 -> 60;
+                case 3 -> 90;
+                case 4 -> 120;
+                case 5 -> {
+                    System.out.print("Enter your custom exercise target (in minutes): ");
+                    yield s.nextInt();
+                }
+                default -> {
+                    System.out.println("Invalid choice. Defaulting to 60 minutes.");
+                    yield 60;
+                }
+            };
+        }
+            
         System.out.print("Enter your exercise duration (in minutes): ");
         int duration = s.nextInt();
-        System.out.println ("Enter your exercise type (e.g., Cardio, Strength): ");
-        String type = s.nextLine() + s.next();
-        // System.out.print("Enter your exercise frequency (e.g., Daily, Weekly): ");
-        // String exerciseFrequency = s.nextLine();
-
+        s.nextLine(); // clear newline setelah nextInt()
+    
+        System.out.print("Enter your exercise type (e.g., Cardio, Strength Training): ");
+        // PERBAIKAN: Gunakan s.nextLine() untuk membaca seluruh baris input
+        String type = s.nextLine();
+    
         ExerciseHabit exerciseHabit = new ExerciseHabit(
             targetduration,
             duration, 
             type
         );
-
-        System.out.println("Your Exercise Habit :");
+    
+        // Anda mungkin ingin menambahkan habit ini ke list habit user
+        // currentUser.addHabit(exerciseHabit); 
+        // currentUser.setExerciseHabit(exerciseHabit); // Jika Anda punya setter spesifik
+    
+        System.out.println("\nYour Exercise Habit :");
         System.out.println("Target: " + exerciseHabit.getTargetduration() + " minutes");
         System.out.println("Duration: " + exerciseHabit.getDuration() + " minutes");
         System.out.println("Type: " + exerciseHabit.getType());
         System.out.println("Habit added successfully!");
+    
+        this.todayExerciseDuration += duration;
 
-        if(duration >= exerciseHabit.getTargetduration()) {
+
+        if(this.todayExerciseDuration >= duration) { // Gunakan this.todayWaterIntake untuk pengecekan
             habitCount++;
-        }
     }
+}
 
     public void addWaterIntakeHabit() {
+        int goal;
         System.out.println("\n=== WATER INTAKE HABIT 🥛 ===");
+        System.out.println("Your current water intake goal is " + waterGoal + " liters.");
+        System.out.println("You can choose from the following options or enter a custom goal:");
+        System.out.println("1. Following the default goal");
+        System.out.println("2. Set a custom goal");
+        int option = s.nextInt();
+        s.nextLine(); // clear newline
+        if (option == 1){
+        System.out.println("You have chosen to follow the default goal of " + waterGoal + " liters.");
+        goal = waterGoal; // Use the default goal
+        System.out.println("Your daily water intake goal is set to " + goal + " liters.");
+        } else {
         System.out.print("Enter your daily water intake goal (in liters) ");
         System.out.println("""
 
@@ -684,7 +745,7 @@ public class Main {
         int goals = s.nextInt();
         s.nextLine();
 
-        int goal = switch (goals) {
+        goal = switch (goals) {
             case 1 -> 1;
             case 2 -> 2;
             case 3 -> 3;
@@ -693,6 +754,7 @@ public class Main {
                 yield s.nextInt();
             }
         };
+    }
 
         System.out.print("Enter your current water intake (in liters): ");
         int waterIntake = s.nextInt();
@@ -704,14 +766,13 @@ public class Main {
             goal
         );
 
-        waterHabit.logWaterIntake(waterIntake);
-        currentUser.addHabit(waterHabit);
+        this.todayWaterIntake += waterIntake;
 
 
         System.out.println("✅ Water Intake Habit added successfully.");
         waterHabit.printDetails();
 
-        if(waterIntake >= waterHabit.getGoal()) {
+        if(this.todayWaterIntake >= goal) { // Gunakan this.todayWaterIntake untuk pengecekan
             habitCount++;
         }
         
