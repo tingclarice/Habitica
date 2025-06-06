@@ -160,9 +160,11 @@ public class Main {
 
         User newUser = new User(username, password);
         users.add(newUser);
-        System.out.println("Sign-up successful! You can now log in.");
+        setGoalStart(); // Set default goals after sign up
+    }
+    
 
-        // GOAL SETTING
+    public void setGoalStart() {
         System.out.println("\n=== GOAL SETTING ===");
         System.out.println("Set your daily goals for default habits you can track:");
         
@@ -201,6 +203,8 @@ public class Main {
             System.out.println("Invalid input. Please enter a number for the exercise habit.");
             s.nextLine(); // clear buffer
         }
+
+        System.out.println("\nSign-up successful! You can now log in.");
 
         startMenu(); // go to the main habit menu
     }
@@ -315,7 +319,7 @@ public class Main {
     public void addHabitMenu() {
         int choice = 0;
 
-        System.out.println("\n=== ADD NEW HABIT ===");
+        System.out.println("\n=== ADD HABIT PROGRESS ===");
         System.out.println("Choose a habit type:");
 
         // 1-3: Built-in habits
@@ -387,11 +391,6 @@ public class Main {
     }
 
     // ADD HABIT MENU FOR EACH HABITs
-
-    public void editHabit() {}
-
-    public void deleteHabit() {}
-
     public void createCustomHabit() {
         System.out.println("\n=== CREATE CUSTOM HABIT ===");
 
@@ -506,6 +505,7 @@ public class Main {
 
         System.out.println("=====================");
         System.out.println("Which goals would you like to change?");
+        
         System.out.print("Option: ");
         int option = s.nextInt();
     }
