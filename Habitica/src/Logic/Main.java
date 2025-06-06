@@ -570,7 +570,7 @@ public class Main {
         System.out.println("Calories consumed: " + caloriesConsumed + " kcal");
         System.out.println("Goal met: " + (caloriesTracker.goalMet()));
 
-        this.todayCalories += calorieGoal;
+        this.todayCalories += caloriesConsumed;
 
 
         if(this.todayCalories >= calorieGoal) { // Gunakan this.todayWaterIntake untuk pengecekan
@@ -777,6 +777,5 @@ public class Main {
         }
         
     }
-
-    }
+}
 
