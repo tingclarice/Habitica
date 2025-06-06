@@ -16,10 +16,13 @@ import Model.Achievement;
 import Model.CaloriesTracker;
 import Model.CustomHabit;
 import Model.SleepHabit;
-import Model.ExerciseHabit; 
-public class Main {
+import Model.ExerciseHabit;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.Socket;
 
-    
+public class Main {
     private ArrayList<User> users = new ArrayList<>();
     private HashMap<String, Achievement> achievements = new HashMap<>();
     private Scanner s = new Scanner(System.in);
@@ -160,11 +163,11 @@ public class Main {
 
         User newUser = new User(username, password);
         users.add(newUser);
-        setGoalStart(); // Set default goals after sign up
+        setGoalStart(newUser); // Set default goals after sign up
     }
     
 
-    public void setGoalStart() {
+    public void setGoalStart(User user) {
         System.out.println("\n=== GOAL SETTING ===");
         System.out.println("Set your daily goals for default habits you can track:");
         
@@ -206,6 +209,7 @@ public class Main {
 
         System.out.println("\nSign-up successful! You can now log in.");
 
+        setupUserFile(user.getUsername(), user.getPassword()); // Create user file for data storage
         startMenu(); // go to the main habit menu
     }
 
@@ -717,6 +721,39 @@ public class Main {
             habitCount++;
         }
         
+    }
+
+    // FILE HANDLING
+    public void setupUserFile(String username, String password) {
+        String folderPath = "./Database/";
+        File folder = new File(folderPath);
+        if (!folder.exists()) {
+            folder.mkdirs(); // Create the folder if not exist
+        }
+
+        String filename = folderPath + "data_" + username + ".txt";
+        File file = new File(filename);
+
+        if (!file.exists()) {
+            try {
+                if (file.createNewFile()) {
+                    System.out.println("User File created: " + filename);
+
+                    // Write username and password
+                    FileWriter writer = new FileWriter(file);
+                    writer.write("Username: " + username + "\n");
+                    writer.write("Password: " + password + "\n");
+                    writer.close();
+                } else {
+                    System.out.println("Error creating file: " + filename);
+                } 
+            }  catch (IOException e) {
+                System.out.println("Error creating file!");
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("File already exists: " + filename);
+        }
     }
 
     }
