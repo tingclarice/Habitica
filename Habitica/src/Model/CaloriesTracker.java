@@ -26,11 +26,11 @@ public class CaloriesTracker extends DefaultHabit {
         return caloriesConsumed;
     }
 
-    public int getDailyCalorieGoal() {
+    public int getGoal() {
         return dailyCalorieGoal;
     }
 
-    public void setDailyCalorieGoal(int goal) {
+    public void setGoal(int goal) {
         this.dailyCalorieGoal = goal;
     }
 
