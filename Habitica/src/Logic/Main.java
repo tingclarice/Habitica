@@ -570,10 +570,10 @@ public class Main {
         System.out.println("Calories consumed: " + caloriesConsumed + " kcal");
         System.out.println("Goal met: " + (caloriesTracker.goalMet()));
 
-        this.todayCalories += caloriesConsumed;
+        this.todayCalories += calorieGoal;
 
 
-        if(this.todayCalories >= caloriesConsumed) { // Gunakan this.todayWaterIntake untuk pengecekan
+        if(this.todayCalories >= calorieGoal) { // Gunakan this.todayWaterIntake untuk pengecekan
             habitCount++;
     }
     }
@@ -637,10 +637,10 @@ public class Main {
         System.out.println("Duration: " + sleepHabit.getSleepDuration() + " jam");
         System.out.println("Quality: " + sleepHabit.getSleepQuality());
         System.out.println("Habit added successfully!");
-        this.todaySleepDuration += sleepDuration;
+        this.todaySleepDuration += targetSleepDuration;
 
 
-        if(this.todaySleepDuration >= sleepDuration) { // Gunakan this.todayWaterIntake untuk pengecekan
+        if(this.todaySleepDuration >= targetSleepDuration) { // Gunakan this.todayWaterIntake untuk pengecekan
             habitCount++;
     }
     }
@@ -712,10 +712,10 @@ public class Main {
         System.out.println("Type: " + exerciseHabit.getType());
         System.out.println("Habit added successfully!");
     
-        this.todayExerciseDuration += duration;
+        this.todayExerciseDuration += targetduration;
 
 
-        if(this.todayExerciseDuration >= duration) { // Gunakan this.todayWaterIntake untuk pengecekan
+        if(this.todayExerciseDuration >= targetduration) { // Gunakan this.todayWaterIntake untuk pengecekan
             habitCount++;
     }
 }
