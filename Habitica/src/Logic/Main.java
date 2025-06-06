@@ -215,10 +215,8 @@ public class Main {
             s.nextLine(); // clear buffer
         }
 
+        setupUserFile(user.getUsername(), user.getPassword(), calorieGoal, waterGoal, sleepGoal, exerciseGoal);
         System.out.println("\nSign-up successful! You can now log in.");
-
-        setupUserFile(user.getUsername(), user.getPassword()); // Create user file for data storage
-        startMenu(); // go to the main habit menu
     }
 
     public void logIn() {
@@ -289,7 +287,7 @@ public class Main {
                     case 6 -> achievement();
                     case 7 -> {
                         System.out.println("Logging out...");
-                        currentUser = null;
+                        startMenu();
                     }
                     default -> System.out.println("Invalid option. Try again.");
                 }
@@ -311,7 +309,10 @@ public class Main {
                 System.out.println("Cancelled. Returning to main menu.");
                 return;
             }
+
+            saveDay(confirm, currentDate, calorieGoal, calorieGoal, waterGoal, day, sleepGoal, calorieGoal, exerciseGoal, exerciseGoal);
             System.out.println("\n=== PROGRESS TO NEXT DAY ===");
+            
             // Create LocalDate from current values
             currentDate = LocalDate.of(year, month, day);
             
@@ -725,12 +726,18 @@ public class Main {
             
         System.out.print("Enter your exercise duration (in minutes): ");
         int duration = s.nextInt();
+<<<<<<< Updated upstream
         s.nextLine(); // clear newline setelah nextInt()
     
         System.out.print("Enter your exercise type (e.g., Cardio, Strength Training): ");
         // PERBAIKAN: Gunakan s.nextLine() untuk membaca seluruh baris input
         String type = s.nextLine();
     
+=======
+        System.out.println ("Enter your exercise type (e.g., Cardio, Strength): ");
+        String type = s.nextLine() + s.next();
+
+>>>>>>> Stashed changes
         ExerciseHabit exerciseHabit = new ExerciseHabit(
             targetduration,
             duration, 
@@ -816,7 +823,7 @@ public class Main {
     }
 
     // FILE HANDLING
-    public void setupUserFile(String username, String password) {
+    public void setupUserFile(String username, String password, int calorieGoal, int waterGoal, int sleepGoal, int exerciseGoal) {
         String folderPath = "./Database/";
         File folder = new File(folderPath);
         if (!folder.exists()) {
@@ -826,25 +833,68 @@ public class Main {
         String filename = folderPath + "data_" + username + ".txt";
         File file = new File(filename);
 
-        if (!file.exists()) {
-            try {
-                if (file.createNewFile()) {
-                    System.out.println("User File created: " + filename);
-
-                    // Write username and password
-                    FileWriter writer = new FileWriter(file);
-                    writer.write("Username: " + username + "\n");
-                    writer.write("Password: " + password + "\n");
-                    writer.close();
-                } else {
-                    System.out.println("Error creating file: " + filename);
-                } 
-            }  catch (IOException e) {
-                System.out.println("Error creating file!");
-                e.printStackTrace();
+        try {
+            if (file.createNewFile()) {
+                System.out.println("User file created: " + filename);
+            } else {
+                System.out.println("User file already exists. Overwriting content.");
             }
-        } else {
-            System.out.println("File already exists: " + filename);
+
+            FileWriter writer = new FileWriter(file, false); // false = overwrite
+
+            // User Info Section
+            writer.write("=== USER INFO ===\n");
+            writer.write("Username=" + username + "\n");
+            writer.write("Password=" + password + "\n");
+
+            // Goals Section
+            writer.write("=== GOALS ===\n");
+            writer.write("CaloriesGoal=" + calorieGoal + "\n");
+            writer.write("WaterGoal=" + waterGoal + "\n");
+            writer.write("SleepGoal=" + sleepGoal + "\n");
+            writer.write("ExerciseGoal=" + exerciseGoal + "\n");
+
+            writer.close();
+            System.out.println("User data saved to file: " + filename);
+        } catch (IOException e) {
+            System.out.println("Error writing to file!");
+            e.printStackTrace();
+        }
+        
+    }
+
+    public void saveDay(String username, LocalDate date,
+                                    int calorieGoal, int calorieProgress,
+                                    double waterGoal, double waterProgress,
+                                    int sleepGoal, int sleepProgress,
+                                    int exerciseGoal, int exerciseProgress) 
+    {
+        String filePath = "./Database/data_" + username + ".txt";
+        File file = new File(filePath);
+
+        try (FileWriter writer = new FileWriter(file, true)) {
+            writer.write("\n[" + date + "]\n");
+
+            writer.write("CaloriesGoal=" + calorieGoal + "\n");
+            writer.write("CaloriesProgress=" + calorieProgress + "\n");
+            writer.write("CaloriesMet=" + (calorieProgress >= calorieGoal) + "\n");
+
+            writer.write("WaterGoal=" + waterGoal + "\n");
+            writer.write("WaterProgress=" + waterProgress + "\n");
+            writer.write("WaterMet=" + (waterProgress >= waterGoal) + "\n");
+
+            writer.write("SleepGoal=" + sleepGoal + "\n");
+            writer.write("SleepProgress=" + sleepProgress + "\n");
+            writer.write("SleepMet=" + (sleepProgress >= sleepGoal) + "\n");
+
+            writer.write("ExerciseGoal=" + exerciseGoal + "\n");
+            writer.write("ExerciseProgress=" + exerciseProgress + "\n");
+            writer.write("ExerciseMet=" + (exerciseProgress >= exerciseGoal) + "\n");
+
+            System.out.println("✅ History saved for " + date);
+        } catch (IOException e) {
+            System.out.println("❌ Error writing history.");
+            e.printStackTrace();
         }
     }
 
