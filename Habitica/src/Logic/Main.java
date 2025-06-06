@@ -256,9 +256,10 @@ public class Main {
                     [1] Next Day
                     [2] Add Habit Progress
                     [3] Create Custom Habit
-                    [4] History
-                    [5] Achievements
-                    [6] Log Out
+                    [4] Edit Goal
+                    [5] History
+                    [6] Achievements
+                    [7] Log Out
                     """);
 
             System.out.print("Option: ");
@@ -271,9 +272,10 @@ public class Main {
                     case 1 -> nextDay();
                     case 2 -> addHabitMenu();
                     case 3 -> createCustomHabit();
-                    case 4 -> history();
-                    case 5 -> achievement();
-                    case 6 -> {
+                    // case 4 -> editGoal();
+                    case 5 -> history();
+                    case 6 -> achievement();
+                    case 7 -> {
                         System.out.println("Logging out...");
                         currentUser = null;
                     }
@@ -353,7 +355,7 @@ public class Main {
             choice = s.nextInt();
             s.nextLine(); // clear newline
 
-            int builtInCount = 3;
+            int builtInCount = 4;
             int cancelOption = builtInCount + customTemplates.size() + 1;
 
             if (choice >= 1 && choice <= builtInCount) {
@@ -619,7 +621,7 @@ public class Main {
     }
 
     public void ExerciseHabit() {
-        System.out.println("=== EXERCISE HABIT 🚴🏻 ===");
+        System.out.println("\n=== EXERCISE HABIT 🚴🏻 ===");
         System.out.println("Enter Your Exercise Duration Target");
         System.out.println("""
                 1. 30 minutes
