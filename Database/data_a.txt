@@ -1,0 +1,24 @@
+=== USER INFO ===
+Username=a
+Password=a
+=== GOALS ===
+CaloriesGoal=3000
+WaterGoal=3
+SleepGoal=9
+ExerciseGoal=70
+
+=== DAILY PROGRESS ===
+Date=2025-01-02
+CaloriesGoal=3000
+CaloriesProgress=0
+CaloriesMet=false
+WaterGoal=3
+WaterProgress=0
+WaterMet=false
+SleepGoal=9
+SleepProgress=0
+SleepMet=false
+ExerciseGoal=70
+ExerciseProgress=0
+ExerciseMet=false
+=== END OF DAY ===

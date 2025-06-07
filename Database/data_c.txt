@@ -1,6 +1,6 @@
 === USER INFO ===
-Username=b
-Password=b
+Username=c
+Password=c
 === GOALS ===
 CaloriesGoal=2000
 WaterGoal=2

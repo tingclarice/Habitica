@@ -17,7 +17,12 @@ import Model.CaloriesTracker;
 import Model.CustomHabit;
 import Model.SleepHabit;
 import Model.ExerciseHabit;
+import Model.DailyHistory;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
@@ -27,7 +32,7 @@ public class Main {
     private HashMap<String, Achievement> achievements = new HashMap<>();
     private Scanner s = new Scanner(System.in);
     private LocalDate currentDate;
-    private User currentUser = null;
+    private User currentUser;
     private int day;
     private int month;
     private int year; 
@@ -45,6 +50,129 @@ public class Main {
     int tmp_sleepGoal = sleepGoal;
     int tmp_exerciseGoal = exerciseGoal;
 
+    private void loadUsersFromDatabase() {
+    File databaseFolder = new File("Database");
+    File[] files = databaseFolder.listFiles((dir, name) -> name.startsWith("data_") && name.endsWith(".txt"));
+
+    if (files != null) {
+        for (File file : files) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                String line;
+                String username = "";
+                String password = "";
+
+                while ((line = reader.readLine()) != null) {
+                    if (line.startsWith("Username=")) {
+                        username = line.split("=")[1];
+                    } else if (line.startsWith("Password=")) {
+                        password = line.split("=")[1];
+                    } 
+                }
+
+                User user = new User(username, password);
+
+
+                users.add(user);
+            } catch (IOException e) {
+                System.out.println("Error reading file: " + file.getName());
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+    public void parseAndSetGoals() {
+    String filePath = "Database/data_" + currentUser.getUsername() + ".txt";
+    boolean fileReadSuccess = false;
+    
+    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        String line;
+        boolean inGoalsSection = false;
+        
+        while ((line = reader.readLine()) != null) {
+            line = line.trim();
+            
+            // Skip empty lines
+            if (line.isEmpty()) {
+                continue;
+            }
+            
+            // Check for section start
+            if (line.equals("=== GOALS ===")) {
+                inGoalsSection = true;
+                continue;
+            }
+            
+            // If we're in the GOALS section, parse the lines
+            if (inGoalsSection) {
+                // Check for section end
+                if (line.startsWith("===")) {
+                    break;
+                }
+                
+                // Parse key=value pairs - FIXED: Check for "=" instead of "Goal="
+                if (line.contains("=")) {
+                    String[] parts = line.split("=", 2); // Split on first = only
+                    if (parts.length == 2) {
+                        String key = parts[0].trim();
+                        String value = parts[1].trim();
+                        
+                        try {
+                            int intValue = Integer.parseInt(value);
+                            switch (key) {
+                                case "CaloriesGoal":
+                                    calorieGoal = intValue;
+                                    tmp_calorieGoal = intValue; // Also update the temp variable
+                                    fileReadSuccess = true;
+                                    System.out.println("Loaded CaloriesGoal: " + intValue); // Debug output
+                                    break;
+                                case "WaterGoal":
+                                    waterGoal = intValue;
+                                    tmp_waterGoal = intValue; // Also update the temp variable
+                                    fileReadSuccess = true;
+                                    System.out.println("Loaded WaterGoal: " + intValue); // Debug output
+                                    break;
+                                case "SleepGoal":
+                                    sleepGoal = intValue;
+                                    tmp_sleepGoal = intValue; // Also update the temp variable
+                                    fileReadSuccess = true;
+                                    System.out.println("Loaded SleepGoal: " + intValue); // Debug output
+                                    break;
+                                case "ExerciseGoal":
+                                    exerciseGoal = intValue;
+                                    tmp_exerciseGoal = intValue; // Also update the temp variable
+                                    fileReadSuccess = true;
+                                    System.out.println("Loaded ExerciseGoal: " + intValue); // Debug output
+                                    break;
+                            }
+                        } catch (NumberFormatException e) {
+                            System.err.println("Invalid number format for " + key + ": " + value);
+                        }
+                    }
+                }
+            }
+        }
+    } catch (FileNotFoundException e) {
+        System.err.println("Goals file not found: " + filePath);
+    } catch (IOException e) {
+        System.err.println("Error reading goals file: " + e.getMessage());
+    }
+    
+    // Only set defaults if we completely failed to read any goals
+    if (!fileReadSuccess) {
+        setDefaultGoals();
+        System.out.println("Using default goals as fallback");
+    } else {
+        System.out.println("Successfully loaded goals from file");
+    }
+}
+
+    private void setDefaultGoals() {
+        this.calorieGoal = 2000;       // Default calorie goal
+        this.waterGoal = 2;            // Default water goal in liters
+        this.sleepGoal = 8;            // Default sleep goal in hours
+        this.exerciseGoal = 30;        // Default exercise goal in minutes
+    }
 
     public Main() {
         achievements.put("JustOneStep", new Achievement("Just One Step", "Setiap perjalanan panjang dimulai dari satu langkah."));
@@ -57,6 +185,12 @@ public class Main {
         achievements.put("HealthyLifestyle", new Achievement("Healthy Lifestyle", "Gaya hidup sehat adalah investasi terbaik untuk masa depanmu!"));
         achievements.put("ConsistencyKing", new Achievement("Consistency King", "Setiap hari adalah kesempatan baru untuk menjadi lebih baik."));
         achievements.put("MindfulLiving", new Achievement("Mindful Living", "Hiduplah dengan kesadaran penuh dan nikmati setiap momen."));
+    
+        // Load all existing users from database at startup
+        loadUsersFromDatabase();
+        
+        // currentUser remains null until someone logs in
+        currentUser = null;
     }
 
     // STARTING SCREEN
@@ -229,13 +363,16 @@ public class Main {
 
         for (User user : users) {
             if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                
                 currentUser = user;
                 System.out.println("\nWelcome back, " + username + "!");
+                
+                parseAndSetGoals();
                 menu(); // go to the main habit menu
                 return;
             }
         }
-        System.out.println("Invalid username or password. Try again.");
+        
     }
 
     public void exit() {
@@ -260,16 +397,25 @@ public class Main {
             System.out.println(todaySleepDuration + "/" + sleepGoal + " hours of sleep");
             System.out.println(todayExerciseDuration + "/" + exerciseGoal + " minutes of exercise");
 
+            // Custom Habit Progress Display
+            LocalDate today = LocalDate.of(year, month, day); // Use program's date, not LocalDate.now()
+            ArrayList<CustomHabit> customTemplates = currentUser.getCustomHabitTemplates();
+            for (CustomHabit ch : customTemplates) {
+                int progress = ch.getProgressForDate(today);
+                int goal = ch.getGoal();
+                String unit = ch.getGoalUnit();
+                System.out.println(progress + "/" + goal + " " + unit + " of " + ch.getName());
+            }
+
             System.out.println("""
                     ========================================
                     Main Menu :
                     [1] Next Day
                     [2] Add Habit Progress
                     [3] Create Custom Habit
-                    [4] Edit Goal
-                    [5] History
-                    [6] Achievements
-                    [7] Log Out
+                    [4] History
+                    [5] Achievements
+                    [6] Log Out
                     """);
 
             System.out.print("Option: ");
@@ -282,10 +428,9 @@ public class Main {
                     case 1 -> nextDay();
                     case 2 -> addHabitMenu();
                     case 3 -> createCustomHabit();
-                    // case 4 -> editGoal();
-                    case 5 -> history();
-                    case 6 -> achievement();
-                    case 7 -> {
+                    // case 4 -> history();
+                    case 5 -> achievement();
+                    case 6 -> {
                         System.out.println("Logging out...");
                         startMenu();
                     }
@@ -297,7 +442,7 @@ public class Main {
                 s.nextLine(); // clear invalid input
             }
 
-        } while (input != 8);
+        } while (input != 6);
     }
 
     // DAY PROGRESSION
@@ -310,11 +455,15 @@ public class Main {
                 return;
             }
 
-            saveDay(confirm, currentDate, calorieGoal, calorieGoal, waterGoal, day, sleepGoal, calorieGoal, exerciseGoal, exerciseGoal);
-            System.out.println("\n=== PROGRESS TO NEXT DAY ===");
-            
-            // Create LocalDate from current values
+            // Create current date for saving
             currentDate = LocalDate.of(year, month, day);
+            
+            // Save current day progress
+            saveDay(currentUser.getUsername(), currentDate, calorieGoal, todayCalories, 
+                    waterGoal, todayWaterIntake, sleepGoal, todaySleepDuration, 
+                    exerciseGoal, todayExerciseDuration);
+            
+            System.out.println("\n=== PROGRESS TO NEXT DAY ===");
             
             // Add one day
             LocalDate nextDate = currentDate.plusDays(1);
@@ -330,16 +479,20 @@ public class Main {
             System.out.println("Error progressing to the next day. Current date might be invalid.");
         }
 
+        // Reset daily progress
         todayWaterIntake = 0;
         todayCalories = 0;
         todaySleepDuration = 0;
         todayExerciseDuration = 0;
 
+        // Reset goals to default values
         calorieGoal = tmp_calorieGoal; 
-        waterGoal = tmp_waterGoal; // Reset to default
-        sleepGoal = tmp_sleepGoal; // Reset to default
-        exerciseGoal = tmp_exerciseGoal; // Reset to default
-        // Reset to default
+        waterGoal = tmp_waterGoal;
+        sleepGoal = tmp_sleepGoal;
+        exerciseGoal = tmp_exerciseGoal;
+        
+        // Note: Custom habit progress is automatically handled by the date-based system
+        // No need to manually reset as each date has its own progress tracking
     }
 
     // HABIT MANAGEMENT
@@ -349,7 +502,7 @@ public class Main {
         System.out.println("\n=== ADD HABIT PROGRESS ===");
         System.out.println("Choose a habit type:");
 
-        // 1-3: Built-in habits
+        // 1-4: Built-in habits
         System.out.println("[1] Calories Tracker");
         System.out.println("[2] Water Intake Habit");
         System.out.println("[3] Sleep Habit");
@@ -362,7 +515,11 @@ public class Main {
         ArrayList<CustomHabit> customTemplates = currentUser.getCustomHabitTemplates();
         for (int i = 0; i < customTemplates.size(); i++) {
             CustomHabit ch = customTemplates.get(i);
-            System.out.printf("[%d] Custom: %s (Goal: %d)\n", optionNumber, ch.getName(), ch.getGoal());
+            // Get current date progress for display
+            LocalDate today = LocalDate.of(year, month, day);
+            int currentProgress = ch.getProgressForDate(today);
+            System.out.printf("[%d] Custom: %s (Progress: %d/%d %s)\n", 
+                optionNumber, ch.getName(), currentProgress, ch.getGoal(), ch.getGoalUnit());
             optionNumber++;
         }
 
@@ -389,6 +546,10 @@ public class Main {
                 int templateIndex = choice - builtInCount - 1;
                 CustomHabit template = customTemplates.get(templateIndex);
 
+                // Use the current game date instead of LocalDate.now()
+                LocalDate today = LocalDate.of(year, month, day);
+                int currentProgress = template.getProgressForDate(today);
+
                 // Ask for progress
                 System.out.printf("You selected: %s\n", template.getName());
                 System.out.printf("Goal: %d\n", template.getGoal());
@@ -397,13 +558,18 @@ public class Main {
                 s.nextLine();
 
                 // Create a new CustomHabit and set progress
-                CustomHabit newCustomHabit = new CustomHabit(template.getName(), template.getDescription(), template.getGoal());
-                newCustomHabit.setProgress(progress);
+                CustomHabit newCustomHabit = new CustomHabit(
+                    template.getName(), 
+                    template.getDescription(), 
+                    template.getGoal(), 
+                    template.getGoalUnit());
+                
+                newCustomHabit.setProgressForDate(today, progress);
                 currentUser.addHabit(newCustomHabit);
 
                 // Show result
                 System.out.println("✅ Custom Habit '" + newCustomHabit.getName() + "' added successfully!");
-                System.out.printf("Progress: %d / %d\n", newCustomHabit.getProgress(), newCustomHabit.getGoal());
+                System.out.printf("Progress: %d / %d %d\n", newCustomHabit.getProgressForDate(today), newCustomHabit.getGoal(), newCustomHabit.getGoalUnit());
                 System.out.println("Goal met: " + (newCustomHabit.goalMet() ? "✅ Yes" : "❌ No"));
             } else if (choice == cancelOption) {
                 System.out.println("Cancelled.");
@@ -428,19 +594,23 @@ public class Main {
         String description = s.nextLine();
 
         System.out.print("Enter your goal (e.g., 10 repetitions, 100 pages): ");
-        int goal = 0;
+        String goalInput = s.next() + s.nextLine(); // Read the goal input
+
+        String[] parts = goalInput.split(" ", 2);
+
+        int goalAmount = 0;
+        String goalUnit = "";
 
         try {
-            goal = s.nextInt();
-            s.nextLine(); // clear buffer
-        } catch (InputMismatchException e) {
-            System.out.println("Invalid input. Goal must be a number.");
-            s.nextLine(); // clear invalid input
-            return; // exit early
+            goalAmount = Integer.parseInt(parts[0]); // First part is number
+            goalUnit = parts[1]; // Second part is unit
+        } catch (Exception e) {
+            System.out.println("Invalid format. Please enter a number followed by a unit (e.g., 10 repetitions).");
+            return; // Exit early if input is invalid
         }
 
         // Create the custom habit
-        CustomHabit customHabit = new CustomHabit(name, description, goal);
+        CustomHabit customHabit = new CustomHabit(name, description, goalAmount, goalUnit);
 
         // (Optional) Add to a list of habits if you maintain one
         currentUser.addCustomHabitTemplate(customHabit); // Assuming habitList is a List<Habit> you maintain
@@ -450,8 +620,13 @@ public class Main {
         menu();
     }
 
-    public void history() {}
+    // HISTORY START
+    // Complete History System - Add these methods to your Main class
 
+    
+    // HISTORY END
+
+    // ACHIEVEMENTS START
     public void achievement() {
         checkAchievement();
         if (currentUser.getAchievementsMap().isEmpty()) {
@@ -522,6 +697,7 @@ public class Main {
             currentUser.addAchievement(achievements.get("MindfulLiving"));
         }
     }
+    // ACHIEVEMENTS END
 
     // GOAL SETTING
     public void goalSetting() {
@@ -536,15 +712,6 @@ public class Main {
         System.out.print("Option: ");
         int option = s.nextInt();
     }
-
-    // private void initializeDailyGoals() {
-    //     if (currentUser != null) {
-    //         this.dailyCalorieGoal = currentUser.getCalorieGoal();
-    //         this.dailyWaterGoal = currentUser.getWaterIntakeGoal();
-    //         this.dailySleepGoal = currentUser.getSleepGoal();
-    //         this.dailyExerciseGoal = currentUser.getExerciseGoal();
-    //     }
-    // }
 
     // Habit Specific Menu UI's
     public void CaloriesTrackerHabit() {
@@ -726,18 +893,9 @@ public class Main {
             
         System.out.print("Enter your exercise duration (in minutes): ");
         int duration = s.nextInt();
-<<<<<<< Updated upstream
-        s.nextLine(); // clear newline setelah nextInt()
-    
-        System.out.print("Enter your exercise type (e.g., Cardio, Strength Training): ");
-        // PERBAIKAN: Gunakan s.nextLine() untuk membaca seluruh baris input
-        String type = s.nextLine();
-    
-=======
         System.out.println ("Enter your exercise type (e.g., Cardio, Strength): ");
         String type = s.nextLine() + s.next();
 
->>>>>>> Stashed changes
         ExerciseHabit exerciseHabit = new ExerciseHabit(
             targetduration,
             duration, 
@@ -865,7 +1023,7 @@ public class Main {
 
     public void saveDay(String username, LocalDate date,
                                     int calorieGoal, int calorieProgress,
-                                    double waterGoal, double waterProgress,
+                                    int waterGoal, int waterProgress,
                                     int sleepGoal, int sleepProgress,
                                     int exerciseGoal, int exerciseProgress) 
     {
@@ -873,8 +1031,11 @@ public class Main {
         File file = new File(filePath);
 
         try (FileWriter writer = new FileWriter(file, true)) {
-            writer.write("\n[" + date + "]\n");
-
+            // Add a clear separator for daily entries
+            writer.write("\n=== DAILY PROGRESS ===\n");
+            writer.write("Date=" + date + "\n");
+            
+            // Default habits
             writer.write("CaloriesGoal=" + calorieGoal + "\n");
             writer.write("CaloriesProgress=" + calorieProgress + "\n");
             writer.write("CaloriesMet=" + (calorieProgress >= calorieGoal) + "\n");
@@ -891,12 +1052,38 @@ public class Main {
             writer.write("ExerciseProgress=" + exerciseProgress + "\n");
             writer.write("ExerciseMet=" + (exerciseProgress >= exerciseGoal) + "\n");
 
+            // Save custom habits
+            saveCustomHabitsForDay(writer, date);
+            
+            writer.write("=== END OF DAY ===\n");
+
             System.out.println("✅ History saved for " + date);
         } catch (IOException e) {
             System.out.println("❌ Error writing history.");
             e.printStackTrace();
         }
     }
+
+    private void saveCustomHabitsForDay(FileWriter writer, LocalDate date) throws IOException {
+    ArrayList<CustomHabit> customTemplates = currentUser.getCustomHabitTemplates();
+    
+    if (!customTemplates.isEmpty()) {
+        writer.write("=== CUSTOM HABITS ===\n");
+        
+        for (CustomHabit habit : customTemplates) {
+            int progress = habit.getProgressForDate(date);
+            int goal = habit.getGoal();
+            boolean met = progress >= goal;
+            
+            writer.write("CustomHabitName=" + habit.getName() + "\n");
+            writer.write("CustomHabitGoal=" + goal + "\n");
+            writer.write("CustomHabitProgress=" + progress + "\n");
+            writer.write("CustomHabitUnit=" + habit.getGoalUnit() + "\n");
+            writer.write("CustomHabitMet=" + met + "\n");
+            writer.write("---\n"); // Separator between custom habits
+        }
+    }
+}
 
     }
 
