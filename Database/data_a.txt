@@ -22,3 +22,19 @@ ExerciseGoal=70
 ExerciseProgress=0
 ExerciseMet=false
 === END OF DAY ===
+
+=== DAILY PROGRESS ===
+Date=2022-01-02
+CaloriesGoal=3000
+CaloriesProgress=0
+CaloriesMet=false
+WaterGoal=3
+WaterProgress=0
+WaterMet=false
+SleepGoal=9
+SleepProgress=10
+SleepMet=true
+ExerciseGoal=70
+ExerciseProgress=0
+ExerciseMet=false
+=== END OF DAY ===
