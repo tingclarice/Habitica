@@ -17,7 +17,6 @@ import Model.CaloriesTracker;
 import Model.CustomHabit;
 import Model.SleepHabit;
 import Model.ExerciseHabit;
-import Model.DailyHistory;
 
 import java.io.BufferedReader;
 import java.io.File;
