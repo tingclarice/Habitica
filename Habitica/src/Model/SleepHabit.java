@@ -1,6 +1,6 @@
 package Model;
 
-public class SleepHabit extends Habit {
+public class SleepHabit extends DefaultHabit {
     private int sleepDuration; // in hours
     private String sleepQuality; // e.g., "Good", "Average", "Poor"
     private int targetSleepDuration; // in hours
