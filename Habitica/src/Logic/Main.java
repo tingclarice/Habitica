@@ -544,35 +544,39 @@ public class Main {
                     case 4 -> ExerciseHabit();
                 }
             } else if (choice > builtInCount && choice < cancelOption) {
-                // User chose a custom habit template
-                int templateIndex = choice - builtInCount - 1;
-                CustomHabit template = customTemplates.get(templateIndex);
+                // User chose a custom habit, so we get the INDEX
+                int habitIndex = choice - builtInCount - 1;
 
-                // Use the current game date instead of LocalDate.now()
+                // Get the EXISTING habit from the user's list of templates
+                CustomHabit selectedHabit = customTemplates.get(habitIndex);
+
+                // Use the current game date
                 LocalDate today = LocalDate.of(year, month, day);
-                int currentProgress = template.getProgressForDate(today);
 
-                // Ask for progress
-                System.out.printf("You selected: %s\n", template.getName());
-                System.out.printf("Goal: %d\n", template.getGoal());
-                System.out.print("Enter today's progress: ");
-                int progress = s.nextInt();
-                s.nextLine();
+                // Ask for progress to ADD
+                System.out.printf("\nYou selected: %s\n", selectedHabit.getName());
+                System.out.printf("Goal: %d %s\n", selectedHabit.getGoal(), selectedHabit.getGoalUnit());
+                System.out.print("Enter today's progress to add: ");
+                int progressToAdd = s.nextInt();
+                s.nextLine(); // clear newline
 
-                // Create a new CustomHabit and set progress
-                CustomHabit newCustomHabit = new CustomHabit(
-                    template.getName(), 
-                    template.getDescription(), 
-                    template.getGoal(), 
-                    template.getGoalUnit());
-                
-                newCustomHabit.setProgressForDate(today, progress);
-                currentUser.addHabit(newCustomHabit);
+                // Get the current progress and ADD the new progress to it
+                int currentProgress = selectedHabit.getProgressForDate(today);
+                selectedHabit.setProgressForDate(today, currentProgress + progressToAdd);
+                // DO NOT create a new habit or add it to the user again.
 
-                // Show result
-                System.out.println("✅ Custom Habit '" + newCustomHabit.getName() + "' added successfully!");
-                System.out.printf("Progress: %d / %d %d\n", newCustomHabit.getProgressForDate(today), newCustomHabit.getGoal(), newCustomHabit.getGoalUnit());
-                System.out.println("Goal met: " + (newCustomHabit.goalMet() ? "✅ Yes" : "❌ No"));
+                // Show the result with the corrected printf
+                System.out.println("✅ Progress for '" + selectedHabit.getName() + "' updated successfully!");
+                // The last format specifier must be %s for the String unit
+                System.out.printf("New Progress: %d / %d %s\n", 
+                    selectedHabit.getProgressForDate(today), 
+                    selectedHabit.getGoal(), 
+                    selectedHabit.getGoalUnit()); 
+                if (selectedHabit.getProgressForDate(today) >= selectedHabit.getGoal()) {
+                    selectedHabit.s
+                }
+
+                System.out.println("Goal met: " + (selectedHabit.goalMet() ? "✅ Yes" : "❌ No"));
             } else if (choice == cancelOption) {
                 System.out.println("Cancelled.");
             } else {
