@@ -1,0 +1,41 @@
+=== USER INFO ===
+Username=angel
+Password=angel123
+=== GOALS ===
+CaloriesGoal=2000
+WaterGoal=2
+SleepGoal=7
+ExerciseGoal=45
+
+=== DAILY PROGRESS ===
+Date=2025-01-01
+CaloriesGoal=2000
+CaloriesProgress=2000
+CaloriesMet=true
+WaterGoal=2
+WaterProgress=2
+WaterMet=true
+SleepGoal=7
+SleepProgress=7
+SleepMet=true
+ExerciseGoal=45
+ExerciseProgress=45
+ExerciseMet=true
+=== END OF DAY ===
+
+=== DAILY PROGRESS ===
+Date=2025-01-01
+CaloriesGoal=2000
+CaloriesProgress=2000
+CaloriesMet=true
+WaterGoal=2
+WaterProgress=2
+WaterMet=true
+SleepGoal=7
+SleepProgress=8
+SleepMet=true
+ExerciseGoal=45
+ExerciseProgress=45
+ExerciseMet=true
+AchievementsUnlocked=Just One Step,Consistency is Key
+=== END OF DAY ===

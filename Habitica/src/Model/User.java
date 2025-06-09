@@ -8,6 +8,10 @@ public class User {
     protected ArrayList<Habit> habits;
     private ArrayList<CustomHabit> customHabitTemplates = new ArrayList<>();
     private HashMap<String, Achievement> achievements = new HashMap<>();
+    private CaloriesTracker caloriesTracker;
+    private SleepHabit sleepHabit;
+    private WaterIntakeHabit waterIntakeHabit;
+    private ExerciseHabit exerciseHabit;
     
     // Constructor
     public User(String username, String password) {
@@ -144,6 +148,22 @@ public class User {
         }
         return null;
     }
+
+    public void setCaloriesTracker(CaloriesTracker tracker) {
+        this.caloriesTracker = tracker;
+    }
+
+    public void setSleepHabit(SleepHabit sleepHabit) {
+        this.sleepHabit = sleepHabit;
+    }
+    public void setWaterIntakeHabit(WaterIntakeHabit waterHabit) {
+        this.waterIntakeHabit = waterHabit;
+    }
+    public void setExerciseHabit(ExerciseHabit exerciseHabit) {
+        this.exerciseHabit = exerciseHabit;
+    }
+    
+
 }
 
 

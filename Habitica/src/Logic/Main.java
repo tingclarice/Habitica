@@ -369,6 +369,7 @@ public class Main {
                 System.out.println("\nWelcome back, " + username + "!");
                 
                 parseAndSetGoals();
+                loadUserAchievements(currentUser);
                 menu(); // go to the main habit menu
                 return;
             }
@@ -820,70 +821,116 @@ private void viewDetailedHistory(HistoryEntry entry) {
             System.out.println("No achievements unlocked yet.");
         } else {
             System.out.println("Your Achievements:");
-            for (Map.Entry<String, Achievement> entry : currentUser.getAchievementsMap().entrySet()) {
-                System.out.println(entry.getValue());
+            for (Map.Entry<String, Achievement> entry : achievements.entrySet()) {
+                String achievementKey = entry.getKey();
+                Achievement achievement = entry.getValue();
+        
+                // Cek apakah PENGGUNA memiliki achievement ini
+                if (currentUser.getAchievementsMap().containsKey(achievementKey)) {
+                    // Jika ya, cetak UNLOCKED
+                    System.out.println("[UNLOCKED] " + achievement.getTitle() + ": " + achievement.getDescription());
+                } else {
+                    // Jika tidak, cetak LOCKED
+                    System.out.println("[LOCKED]   " + achievement.getTitle() + ": " + achievement.getDescription());
+                }
             }
         }        
     }
     
-
-    public void checkAchievement(){
-        if(currentUser == null) return;
-
-        // Just One Step: Jika user memiliki setidaknya 1 habit
-        if (currentUser.getHabits().size() >= 1) {
-            currentUser.addAchievement(achievements.get("JustOneStep"));
+    // Tambahkan fungsi ini di dalam class Main Anda
+private void loadUserAchievements(User user) {
+    String filePath = "Database/data_" + user.getUsername() + ".txt";
+    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            // Cari baris yang menyimpan data achievement
+            if (line.startsWith("AchievementsUnlocked=")) {
+                String[] parts = line.split("=", 2);
+                if (parts.length > 1 && !parts[1].equalsIgnoreCase("None")) {
+                    String[] unlockedKeys = parts[1].split(",");
+                    for (String key : unlockedKeys) {
+                        // Ambil objek Achievement dari map global berdasarkan key
+                        if (achievements.containsKey(key)) {
+                            // Tambahkan achievement ke object user saat ini
+                            user.addAchievement(achievements.get(key));
+                        }
+                    }
+                }
+                // Setelah ditemukan, kita bisa berhenti membaca file
+                break; 
+            }
         }
-
-        // Consistency is Key: Jika user menyelesaikan 3 habit dalam sehari
-        if (habitCount >= 3) {
-            currentUser.addAchievement(achievements.get("ConsistencyIsKey"));
-        }
-
-        // Healthy Mind, Healthy Body: Jika user menyelesaikan 5 habit dalam sehari
-        if (habitCount >= 5) {
-            currentUser.addAchievement(achievements.get("HealthyMindHealthyBody"));
-        }
-
-        // Progress Not Perfection: Jika user minum 2 liter air
-        WaterIntakeHabit waterHabit = currentUser.getWaterIntake();
-        if (waterHabit != null && waterHabit.getWaterIntake() >= 2) {
-            currentUser.addAchievement(achievements.get("ProgressNotPerfection"));
-        }
-
-        // Small Wins: Jika user tidur 8 jam
-        SleepHabit sleepHabit = currentUser.getSleepHabit();
-        if (sleepHabit != null && sleepHabit.getSleepDuration() >= 8) {
-            currentUser.addAchievement(achievements.get("SmallWins"));
-        }
-        
-        // Goal Getter: Jika user berolahraga 30 menit
-        ExerciseHabit exerciseHabit = currentUser.getExerciseHabit();
-        if (exerciseHabit != null && exerciseHabit.getDuration() >= 30) {
-            currentUser.addAchievement(achievements.get("GoalGetter"));
-        }
-
-        // Habit Builder: Jika user memenuhi target kalori (goalMet())
-        CaloriesTracker caloriesTracker = currentUser.getCaloriesTracker();
-        if (caloriesTracker != null && caloriesTracker.goalMet()) {
-            currentUser.addAchievement(achievements.get("HabitBuilder"));
-        }
-
-        // Healthy Lifestyle: Jika user minum 3 liter air
-        if (waterHabit != null && waterHabit.getWaterIntake() >= 3) {
-            currentUser.addAchievement(achievements.get("HealthyLifestyle"));
-        }
-
-        // Consistency King: Jika user berolahraga 1 jam
-        if (exerciseHabit != null && exerciseHabit.getDuration() >= 60) {
-            currentUser.addAchievement(achievements.get("ConsistencyKing"));
-        }
-        
-        // Mindful Living: Jika user membuat setidaknya satu custom habit template
-        if (currentUser.getCustomHabitTemplates().size() > 0) {
-            currentUser.addAchievement(achievements.get("MindfulLiving"));
-        }
+    } catch (IOException e) {
+        System.err.println("Error loading achievements for user " + user.getUsername() + ": " + e.getMessage());
     }
+}
+
+    // Ganti seluruh fungsi checkAchievement() Anda dengan ini
+public void checkAchievement() {
+    if (currentUser == null) return;
+
+    // Cek #1: Just One Step (punya 1+ habit)
+    // Kondisi ini lebih baik dicek berdasarkan progres, bukan hanya definisi habit
+    if (currentUser.getHabits().size() >= 1 && !currentUser.getAchievementsMap().containsKey("JustOneStep")) {
+        System.out.println("🌟 Achievement Unlocked: Just One Step!");
+        currentUser.addAchievement(achievements.get("JustOneStep"));
+    }
+
+    // Cek #2: Consistency is Key (menyelesaikan 3+ habit hari ini)
+    if (habitCount >= 3 && !currentUser.getAchievementsMap().containsKey("ConsistencyIsKey")) {
+        System.out.println("🌟 Achievement Unlocked: Consistency is Key!");
+        currentUser.addAchievement(achievements.get("ConsistencyIsKey"));
+    }
+
+    // Cek #3: Healthy Mind, Healthy Body (menyelesaikan 5+ habit hari ini)
+    if (habitCount >= 5 && !currentUser.getAchievementsMap().containsKey("HealthyMindHealthyBody")) {
+        System.out.println("🌟 Achievement Unlocked: Healthy Mind, Healthy Body!");
+        currentUser.addAchievement(achievements.get("HealthyMindHealthyBody"));
+    }
+
+    // Cek #4: Progress Not Perfection (minum 2 liter air hari ini)
+    if (todayWaterIntake >= 2 && !currentUser.getAchievementsMap().containsKey("ProgressNotPerfection")) {
+        System.out.println("🌟 Achievement Unlocked: Progress Not Perfection!");
+        currentUser.addAchievement(achievements.get("ProgressNotPerfection"));
+    }
+
+    // Cek #5: Small Wins (tidur 8 jam hari ini)
+    if (todaySleepDuration >= 8 && !currentUser.getAchievementsMap().containsKey("SmallWins")) {
+        System.out.println("🌟 Achievement Unlocked: Small Wins!");
+        currentUser.addAchievement(achievements.get("SmallWins"));
+    }
+    
+    // Cek #6: Goal Getter (olahraga 30 menit hari ini)
+    if (todayExerciseDuration >= 30 && !currentUser.getAchievementsMap().containsKey("GoalGetter")) {
+        System.out.println("🌟 Achievement Unlocked: Goal Getter!");
+        currentUser.addAchievement(achievements.get("GoalGetter"));
+    }
+
+    // Cek #7: Habit Builder (memenuhi target kalori hari ini)
+    if (todayCalories >= calorieGoal && !currentUser.getAchievementsMap().containsKey("HabitBuilder")) {
+        System.out.println("🌟 Achievement Unlocked: Habit Builder!");
+        currentUser.addAchievement(achievements.get("HabitBuilder"));
+    }
+
+    // Cek #8: Healthy Lifestyle (minum 3 liter air hari ini)
+    if (todayWaterIntake >= 3 && !currentUser.getAchievementsMap().containsKey("HealthyLifestyle")) {
+        System.out.println("🌟 Achievement Unlocked: Healthy Lifestyle!");
+        currentUser.addAchievement(achievements.get("HealthyLifestyle"));
+    }
+
+    // Cek #9: Consistency King (olahraga 60 menit hari ini)
+    if (todayExerciseDuration >= 60 && !currentUser.getAchievementsMap().containsKey("ConsistencyKing")) {
+        System.out.println("🌟 Achievement Unlocked: Consistency King!");
+        currentUser.addAchievement(achievements.get("ConsistencyKing"));
+    }
+    
+    // Cek #10: Mindful Living (membuat setidaknya satu custom habit)
+    if (currentUser.getCustomHabitTemplates().size() > 0 && !currentUser.getAchievementsMap().containsKey("MindfulLiving")) {
+        System.out.println("🌟 Achievement Unlocked: Mindful Living!");
+        currentUser.addAchievement(achievements.get("MindfulLiving"));
+    }
+}
+
     // ACHIEVEMENTS END
 
     // GOAL SETTING
@@ -940,7 +987,7 @@ private void viewDetailedHistory(HistoryEntry entry) {
                 yield 2000;
             }
         };
- 
+        
         calorieGoal = dailyCalorieGoal;
     }
         // Ask for current calorie intake
@@ -949,6 +996,7 @@ private void viewDetailedHistory(HistoryEntry entry) {
     
         CaloriesTracker caloriesTracker = new CaloriesTracker(dailyCalorieGoal);
         caloriesTracker.logCalories(caloriesConsumed);
+        currentUser.setCaloriesTracker(caloriesTracker);
         currentUser.getHabits().add(caloriesTracker);
     
         System.out.println("Calories Tracker Habit added!");
@@ -962,6 +1010,7 @@ private void viewDetailedHistory(HistoryEntry entry) {
         if(this.todayCalories >= calorieGoal) { // Gunakan this.todayWaterIntake untuk pengecekan
             habitCount++;
     }
+    checkAchievement();
     }
     
 
@@ -1018,6 +1067,9 @@ private void viewDetailedHistory(HistoryEntry entry) {
             sleepQuality, 
             targetSleepDuration
         );
+        currentUser.setSleepHabit(sleepHabit);
+        currentUser.getHabits().add(sleepHabit);
+
     
         // Tampilkan hasil (jika mau)
         System.out.println("Your Sleep Habit :");
@@ -1031,6 +1083,7 @@ private void viewDetailedHistory(HistoryEntry entry) {
         if(this.todaySleepDuration >= targetSleepDuration) { // Gunakan this.todayWaterIntake untuk pengecekan
             habitCount++;
     }
+    checkAchievement();
     }
 
     public void ExerciseHabit() {
@@ -1088,6 +1141,10 @@ private void viewDetailedHistory(HistoryEntry entry) {
             duration, 
             type
         );
+        currentUser.setExerciseHabit(exerciseHabit);
+        currentUser.getHabits().add(exerciseHabit);
+
+        
     
         // Anda mungkin ingin menambahkan habit ini ke list habit user
         // currentUser.addHabit(exerciseHabit); 
@@ -1105,6 +1162,7 @@ private void viewDetailedHistory(HistoryEntry entry) {
         if(this.todayExerciseDuration >= targetduration) { // Gunakan this.todayWaterIntake untuk pengecekan
             habitCount++;
     }
+    checkAchievement();
 }
 
     public void addWaterIntakeHabit() {
@@ -1154,6 +1212,9 @@ private void viewDetailedHistory(HistoryEntry entry) {
             "Track your daily water intake", 
             goal
         );
+        currentUser.setWaterIntakeHabit(waterHabit);
+    currentUser.getHabits().add(waterHabit);
+
 
         this.todayWaterIntake += waterIntake;
 
@@ -1164,7 +1225,7 @@ private void viewDetailedHistory(HistoryEntry entry) {
         if(this.todayWaterIntake >= goal) { // Gunakan this.todayWaterIntake untuk pengecekan
             habitCount++;
         }
-        
+        checkAchievement();
     }
 
     // FILE HANDLING
@@ -1239,9 +1300,17 @@ private void viewDetailedHistory(HistoryEntry entry) {
             writer.write("ExerciseProgress=" + exerciseProgress + "\n");
             writer.write("ExerciseMet=" + (exerciseProgress >= exerciseGoal) + "\n");
 
+            writer.write("AchievementsUnlocked=");
+            if (currentUser.getAchievementsMap().isEmpty()) {
+                writer.write("None\n");
+            } else {
+                String unlocked = String.join(",", currentUser.getAchievementsMap().keySet());
+                writer.write(unlocked + "\n");
+            }
+
             // Save custom habits
             saveCustomHabitsForDay(writer, date);
-            
+
             writer.write("=== END OF DAY ===\n");
 
             System.out.println("✅ History saved for " + date);
@@ -1270,6 +1339,7 @@ private void viewDetailedHistory(HistoryEntry entry) {
             writer.write("---\n"); // Separator between custom habits
         }
     }
+    checkAchievement();
 }
 
     }
