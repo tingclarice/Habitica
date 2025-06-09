@@ -850,26 +850,51 @@ private void processDefaultHabit(BufferedReader reader, HistoryEntry entry,
     entry.addDefaultHabit(habitName, goal, progress, met);
 }
 
+// PROCESS CUSTOM HABITS METHOD - START
 private void processCustomHabits(BufferedReader reader, HistoryEntry entry) throws IOException {
     String line;
-    while (!(line = reader.readLine().trim()).equals("---")) {
+    while ((line = reader.readLine()) != null && !(line = line.trim()).equals("---")) {
         if (line.startsWith("CustomHabitName=")) {
-            String name = line.split("=")[1];
-            line = reader.readLine().trim(); // Goal
-            int goal = Integer.parseInt(line.split("=")[1]);
-            line = reader.readLine().trim(); // Progress
-            int progress = Integer.parseInt(line.split("=")[1]);
-            line = reader.readLine().trim(); // Unit
-            String unit = line.split("=")[1];
-            line = reader.readLine().trim(); // Met
-            boolean met = Boolean.parseBoolean(line.split("=")[1]);
+            String name = line.split("=", 2)[1];
             
-            CustomHabit habit = new CustomHabit(name, "", goal, unit);
-            habit.setProgressForDate(entry.getDate(), progress);
-            entry.addCustomHabit(habit);
+            // Read goal
+            line = reader.readLine().trim();
+            int goal = 0;
+            if (line.startsWith("CustomHabitGoal=")) {
+                goal = Integer.parseInt(line.split("=", 2)[1]);
+            }
+            
+            // Read progress
+            line = reader.readLine().trim();
+            int progress = 0;
+            if (line.startsWith("CustomHabitProgress=")) {
+                progress = Integer.parseInt(line.split("=", 2)[1]);
+            }
+            
+            // Read unit
+            line = reader.readLine().trim();
+            String unit = "";
+            if (line.startsWith("CustomHabitUnit=")) {
+                unit = line.split("=", 2)[1];
+            }
+            
+            // Read met status (optional, we can calculate it)
+            line = reader.readLine().trim();
+            boolean met = false;
+            if (line.startsWith("CustomHabitMet=")) {
+                met = Boolean.parseBoolean(line.split("=", 2)[1]);
+            }
+            
+            // Add to history entry with proper progress tracking
+            entry.addCustomHabitProgress(name, "", goal, progress, unit);
+        } else if (line.equals("NoCustomHabits=true")) {
+            // No custom habits for this day
+            break;
+        } else {
+            continue;
         }
     }
-}
+    }
 
 public void viewHistory() {
     System.out.println("\n=== VIEW HISTORY ===");
@@ -939,39 +964,66 @@ public void viewHistory() {
     }
 }
 
+// Enhanced viewDetailedHistory method
 private void viewDetailedHistory(HistoryEntry entry) {
     System.out.println("\n=== DETAILED HISTORY FOR " + entry.getDate() + " ===");
     
+    // Overall summary
+    System.out.println("\n📊 DAILY SUMMARY");
+    System.out.println("Total Habits Completed: " + entry.getTotalHabitsCompleted() + 
+                      "/" + entry.getTotalHabitsTracked());
+    System.out.println("Completion Rate: " + String.format("%.1f", entry.getCompletionPercentage()) + "%");
+    
+    // Default habits section
     System.out.println("\n--- Default Habits ---");
-    System.out.println("🍽️ Calories: " + entry.getProgress("Calories") + 
-                    "/" + entry.getGoal("Calories") + " kcal - " + 
-                    (entry.isGoalMet("Calories") ? "✅ Met" : "❌ Not Met"));
+    if (entry.getGoal("Calories") > 0) {
+        System.out.println("🍽️ Calories: " + entry.getProgress("Calories") + 
+                        "/" + entry.getGoal("Calories") + " kcal - " + 
+                        (entry.isGoalMet("Calories") ? "✅ Met" : "❌ Not Met"));
+    }
 
-    System.out.println("💧 Water: " + entry.getProgress("Water") + 
-                    "/" + entry.getGoal("Water") + " L - " + 
-                    (entry.isGoalMet("Water") ? "✅ Met" : "❌ Not Met"));
+    if (entry.getGoal("Water") > 0) {
+        System.out.println("💧 Water: " + entry.getProgress("Water") + 
+                        "/" + entry.getGoal("Water") + " L - " + 
+                        (entry.isGoalMet("Water") ? "✅ Met" : "❌ Not Met"));
+    }
 
-    System.out.println("💤 Sleep: " + entry.getProgress("Sleep") + 
-                    "/" + entry.getGoal("Sleep") + " hours - " + 
-                    (entry.isGoalMet("Sleep") ? "✅ Met" : "❌ Not Met"));
+    if (entry.getGoal("Sleep") > 0) {
+        System.out.println("💤 Sleep: " + entry.getProgress("Sleep") + 
+                        "/" + entry.getGoal("Sleep") + " hours - " + 
+                        (entry.isGoalMet("Sleep") ? "✅ Met" : "❌ Not Met"));
+    }
 
-    System.out.println("🏋️ Exercise: " + entry.getProgress("Exercise") + 
-                    "/" + entry.getGoal("Exercise") + " minutes - " + 
-                    (entry.isGoalMet("Exercise") ? "✅ Met" : "❌ Not Met"));
+    if (entry.getGoal("Exercise") > 0) {
+        System.out.println("🏋️ Exercise: " + entry.getProgress("Exercise") + 
+                        "/" + entry.getGoal("Exercise") + " minutes - " + 
+                        (entry.isGoalMet("Exercise") ? "✅ Met" : "❌ Not Met"));
+    }
 
+    // Custom habits section with detailed progress
     System.out.println("\n--- Custom Habits ---");
-    if (entry.getCustomHabits().isEmpty()) {
+    if (entry.getCustomHabitsProgress().isEmpty()) {
         System.out.println("No custom habits tracked this day.");
     } else {
-        for (CustomHabit habit : entry.getCustomHabits()) {
-            int progress = habit.getProgressForDate(entry.getDate());
-            System.out.println("- " + habit.getName() + ": " + 
-                            progress + "/" + habit.getGoal() + " " + habit.getGoalUnit() + 
-                            " - " + (progress >= habit.getGoal() ? "✅ Met" : "❌ Not Met"));
+        for (HistoryEntry.CustomHabitProgress chp : entry.getCustomHabitsProgress()) {
+            System.out.println("🎯 " + chp.getName() + ": " + 
+                            chp.getProgress() + "/" + chp.getGoal() + " " + chp.getUnit() + 
+                            " - " + (chp.isGoalMet() ? "✅ Met" : "❌ Not Met"));
+            
+            // Show description if available
+            if (chp.getDescription() != null && !chp.getDescription().trim().isEmpty()) {
+                System.out.println("   📝 Description: " + chp.getDescription());
+            }
+            
+            // Show completion percentage for this habit
+            double habitPercentage = chp.getGoal() > 0 ? 
+                                   (double) chp.getProgress() / chp.getGoal() * 100 : 0;
+            System.out.println("   📈 Progress: " + String.format("%.1f", habitPercentage) + "%");
+            System.out.println();
         }
     }
     
-    System.out.println("\nPress enter to continue...");
+    System.out.println("Press enter to continue...");
     s.nextLine();
 }
 
@@ -1249,6 +1301,67 @@ public void checkAchievement() {
     checkAchievement();
     }
 
+    // Method to update custom habit progress for today
+public void updateCustomHabitProgress() {
+    if (currentUser.getCustomHabitTemplates().isEmpty()) {
+        System.out.println("No custom habits available. Create a custom habit first!");
+        return;
+    }
+    
+    System.out.println("\n=== UPDATE CUSTOM HABIT PROGRESS ===");
+    System.out.println("Available Custom Habits:");
+    
+    List<CustomHabit> templates = currentUser.getCustomHabitTemplates();
+    for (int i = 0; i < templates.size(); i++) {
+        CustomHabit habit = templates.get(i);
+        int currentProgress = habit.getProgressForDate(LocalDate.now());
+        System.out.println((i + 1) + ". " + habit.getName() + 
+                          " (Current: " + currentProgress + "/" + habit.getGoal() + 
+                          " " + habit.getGoalUnit() + ")");
+    }
+    
+    System.out.print("Select habit to update (1-" + templates.size() + "): ");
+    try {
+        int choice = s.nextInt();
+        s.nextLine(); // consume newline
+        
+        if (choice >= 1 && choice <= templates.size()) {
+            CustomHabit selectedHabit = templates.get(choice - 1);
+            int currentProgress = selectedHabit.getProgressForDate(LocalDate.now());
+            
+            System.out.println("\nSelected: " + selectedHabit.getName());
+            System.out.println("Current progress: " + currentProgress + "/" + 
+                             selectedHabit.getGoal() + " " + selectedHabit.getGoalUnit());
+            System.out.print("Enter new progress: ");
+            
+            int newProgress = s.nextInt();
+            s.nextLine(); // consume newline
+            
+            if (newProgress >= 0) {
+                selectedHabit.setProgressForDate(LocalDate.now(), newProgress);
+                System.out.println("✅ Progress updated successfully!");
+                System.out.println("New progress: " + newProgress + "/" + 
+                                 selectedHabit.getGoal() + " " + selectedHabit.getGoalUnit());
+                
+                // Check if goal is met
+                if (newProgress >= selectedHabit.getGoal()) {
+                    System.out.println("🎉 Goal achieved! Great job!");
+                    habitCount++; // Update habit count for achievements
+                }
+                
+                checkAchievement(); // Check for new achievements
+            } else {
+                System.out.println("❌ Invalid progress value. Progress cannot be negative.");
+            }
+        } else {
+            System.out.println("❌ Invalid choice.");
+        }
+    } catch (Exception e) {
+        System.out.println("❌ Invalid input. Please enter a number.");
+        s.nextLine(); // consume invalid input
+    }
+}
+
     public void ExerciseHabit() {
         int targetduration; // Deklarasi variabel
         System.out.println("=== EXERCISE HABIT 🚴🏻 ===");
@@ -1432,78 +1545,70 @@ public void checkAchievement() {
         
     }
 
-    public void saveDay(String username, LocalDate date,
-                                    int calorieGoal, int calorieProgress,
-                                    int waterGoal, int waterProgress,
-                                    int sleepGoal, int sleepProgress,
-                                    int exerciseGoal, int exerciseProgress) 
-    {
-        String filePath = "./Database/data_" + username + ".txt";
-        File file = new File(filePath);
+    // Enhanced saveDay method to properly save custom habit progress
+public void saveDay(String username, LocalDate date,
+                    int calorieGoal, int calorieProgress,
+                    int waterGoal, int waterProgress,
+                    int sleepGoal, int sleepProgress,
+                    int exerciseGoal, int exerciseProgress) {
+    String filePath = "./Database/data_" + username + ".txt";
+    File file = new File(filePath);
 
-        try (FileWriter writer = new FileWriter(file, true)) {
-            // Add a clear separator for daily entries
-            writer.write("\n=== DAILY PROGRESS ===\n");
-            writer.write("Date=" + date + "\n");
-            
-            // Default habits
-            writer.write("CaloriesGoal=" + calorieGoal + "\n");
-            writer.write("CaloriesProgress=" + calorieProgress + "\n");
-            writer.write("CaloriesMet=" + (calorieProgress >= calorieGoal) + "\n");
-
-            writer.write("WaterGoal=" + waterGoal + "\n");
-            writer.write("WaterProgress=" + waterProgress + "\n");
-            writer.write("WaterMet=" + (waterProgress >= waterGoal) + "\n");
-
-            writer.write("SleepGoal=" + sleepGoal + "\n");
-            writer.write("SleepProgress=" + sleepProgress + "\n");
-            writer.write("SleepMet=" + (sleepProgress >= sleepGoal) + "\n");
-
-            writer.write("ExerciseGoal=" + exerciseGoal + "\n");
-            writer.write("ExerciseProgress=" + exerciseProgress + "\n");
-            writer.write("ExerciseMet=" + (exerciseProgress >= exerciseGoal) + "\n");
-
-            writer.write("AchievementsUnlocked=");
-            if (currentUser.getAchievementsMap().isEmpty()) {
-                writer.write("None\n");
-            } else {
-                String unlocked = String.join(",", currentUser.getAchievementsMap().keySet());
-                writer.write(unlocked + "\n");
-            }
-
-            // Save custom habits
-            saveCustomHabitsForDay(writer, date);
-
-            writer.write("=== END OF DAY ===\n");
-
-            System.out.println("✅ History saved for " + date);
-        } catch (IOException e) {
-            System.out.println("❌ Error writing history.");
-            e.printStackTrace();
-        }
-    }
-
-    private void saveCustomHabitsForDay(FileWriter writer, LocalDate date) throws IOException {
-        ArrayList<CustomHabit> customTemplates = currentUser.getCustomHabitTemplates();
+    try (FileWriter writer = new FileWriter(file, true)) {
+        // Add a clear separator for daily entries
+        writer.write("\n=== DAILY PROGRESS ===\n");
+        writer.write("Date=" + date + "\n");
         
-        if (customTemplates != null && !customTemplates.isEmpty()) {
-            for (CustomHabit habit : customTemplates) {
+        // Default habits
+        writer.write("CaloriesGoal=" + calorieGoal + "\n");
+        writer.write("CaloriesProgress=" + calorieProgress + "\n");
+        writer.write("CaloriesMet=" + (calorieProgress >= calorieGoal) + "\n");
+
+        writer.write("WaterGoal=" + waterGoal + "\n");
+        writer.write("WaterProgress=" + waterProgress + "\n");
+        writer.write("WaterMet=" + (waterProgress >= waterGoal) + "\n");
+
+        writer.write("SleepGoal=" + sleepGoal + "\n");
+        writer.write("SleepProgress=" + sleepProgress + "\n");
+        writer.write("SleepMet=" + (sleepProgress >= sleepGoal) + "\n");
+
+        writer.write("ExerciseGoal=" + exerciseGoal + "\n");
+        writer.write("ExerciseProgress=" + exerciseProgress + "\n");
+        writer.write("ExerciseMet=" + (exerciseProgress >= exerciseGoal) + "\n");
+
+        writer.write("AchievementsUnlocked=");
+        if (currentUser.getAchievementsMap().isEmpty()) {
+            writer.write("None\n");
+        } else {
+            String unlocked = String.join(",", currentUser.getAchievementsMap().keySet());
+            writer.write(unlocked + "\n");
+        }
+
+        // Save custom habits with their progress for this specific date
+        writer.write("=== CUSTOM HABITS ===\n");
+        if (currentUser.getCustomHabitTemplates().isEmpty()) {
+            writer.write("NoCustomHabits=true\n");
+        } else {
+            for (CustomHabit habit : currentUser.getCustomHabitTemplates()) {
                 int progress = habit.getProgressForDate(date);
-                int goal = habit.getGoal();
-                boolean met = progress >= goal;
+                boolean goalMet = progress >= habit.getGoal();
                 
-                // Format all progress data for one habit onto a single, separate line
-                String progressLine = String.format("CustomHabitProgress: Name=%s, Progress=%d, Goal=%d, Unit=%s, Met=%b\n",
-                    habit.getName(),
-                    progress,
-                    goal,
-                    habit.getGoalUnit(),
-                    met);
-                
-                writer.write(progressLine);
+                writer.write("CustomHabitName=" + habit.getName() + "\n");
+                writer.write("CustomHabitGoal=" + habit.getGoal() + "\n");
+                writer.write("CustomHabitProgress=" + progress + "\n");
+                writer.write("CustomHabitUnit=" + habit.getGoalUnit() + "\n");
+                writer.write("CustomHabitMet=" + goalMet + "\n");
             }
         }
-        checkAchievement();
+        writer.write("---\n"); // End of custom habits section
+
+        writer.write("=== END OF DAY ===\n");
+
+        System.out.println("✅ History saved for " + date);
+    } catch (IOException e) {
+        System.out.println("❌ Error writing history.");
+        e.printStackTrace();
     }
-    }
+}
+}
 
