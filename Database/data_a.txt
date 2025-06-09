@@ -7,6 +7,17 @@ WaterGoal=3
 SleepGoal=9
 ExerciseGoal=70
 
+=== CUSTOM HABIT TEMPLATES ===
+CustomHabitName=Meditation
+CustomHabitDescription=Daily meditation practice
+CustomHabitGoal=10
+CustomHabitUnit=hours
+---
+CustomHabitName=Meditation
+CustomHabitDescription=Clear mind
+CustomHabitGoal=1
+CustomHabitUnit=hour
+---
 === DAILY PROGRESS ===
 Date=2025-01-02
 CaloriesGoal=3000
@@ -47,6 +58,13 @@ CaloriesMet=true
 WaterGoal=3
 WaterProgress=3
 WaterMet=true
+Date=2025-01-02
+CaloriesGoal=3000
+CaloriesProgress=0
+CaloriesMet=false
+WaterGoal=3
+WaterProgress=0
+WaterMet=false
 SleepGoal=9
 SleepProgress=0
 SleepMet=false
@@ -54,4 +72,46 @@ ExerciseGoal=70
 ExerciseProgress=0
 ExerciseMet=false
 AchievementsUnlocked=Habit Builder,Progress Not Perfection,Healthy Lifestyle,Just One Step
+AchievementsUnlocked=None
+=== CUSTOM HABITS ===
+CustomHabitName=Meditation
+CustomHabitGoal=10
+CustomHabitProgress=2
+CustomHabitUnit=hours
+CustomHabitMet=false
+CustomHabitName=Meditation
+CustomHabitGoal=1
+CustomHabitProgress=0
+CustomHabitUnit=hour
+CustomHabitMet=false
+---
+=== END OF DAY ===
+
+=== DAILY PROGRESS ===
+Date=2025-01-02
+CaloriesGoal=3000
+CaloriesProgress=0
+CaloriesMet=false
+WaterGoal=3
+WaterProgress=0
+WaterMet=false
+SleepGoal=9
+SleepProgress=0
+SleepMet=false
+ExerciseGoal=70
+ExerciseProgress=0
+ExerciseMet=false
+AchievementsUnlocked=None
+=== CUSTOM HABITS ===
+CustomHabitName=Meditation
+CustomHabitGoal=10
+CustomHabitProgress=0
+CustomHabitUnit=hours
+CustomHabitMet=false
+CustomHabitName=Meditation
+CustomHabitGoal=1
+CustomHabitProgress=129
+CustomHabitUnit=hour
+CustomHabitMet=true
+---
 === END OF DAY ===
