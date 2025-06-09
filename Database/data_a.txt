@@ -7,6 +7,13 @@ WaterGoal=3
 SleepGoal=9
 ExerciseGoal=70
 
+=== CUSTOM HABIT TEMPLATES ===
+CustomHabitName=Meditation
+CustomHabitDescription=Daily meditation practice
+CustomHabitGoal=10
+CustomHabitUnit=hours
+---
+
 === DAILY PROGRESS ===
 Date=2025-01-02
 CaloriesGoal=3000

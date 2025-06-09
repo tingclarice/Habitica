@@ -369,6 +369,7 @@ public class Main {
                 System.out.println("\nWelcome back, " + username + "!");
                 
                 parseAndSetGoals();
+                loadCustomHabitTemplates(currentUser);
                 loadUserAchievements(currentUser);
                 menu(); // go to the main habit menu
                 return;
@@ -571,12 +572,7 @@ public class Main {
                 System.out.printf("New Progress: %d / %d %s\n", 
                     selectedHabit.getProgressForDate(today), 
                     selectedHabit.getGoal(), 
-                    selectedHabit.getGoalUnit()); 
-                if (selectedHabit.getProgressForDate(today) >= selectedHabit.getGoal()) {
-                    selectedHabit.s
-                }
-
-                System.out.println("Goal met: " + (selectedHabit.goalMet() ? "✅ Yes" : "❌ No"));
+                    selectedHabit.getGoalUnit());
             } else if (choice == cancelOption) {
                 System.out.println("Cancelled.");
             } else {
@@ -589,7 +585,167 @@ public class Main {
         }
     }
 
-    // ADD HABIT MENU FOR EACH HABITs
+    // CUSTOM HABITS SECTION - START
+    // Add this method to save custom habit templates to the database file
+    public void saveCustomHabitTemplate(CustomHabit habit) {
+        String filePath = "./Database/data_" + currentUser.getUsername() + ".txt";
+        
+        try {
+            // Read existing content
+            StringBuilder fileContent = new StringBuilder();
+            File file = new File(filePath);
+            
+            if (file.exists()) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                    String line;
+                    boolean inCustomHabitsSection = false;
+                    boolean customHabitsWritten = false;
+                    
+                    while ((line = reader.readLine()) != null) {
+                        // Check if we're entering custom habits section
+                        if (line.equals("=== CUSTOM HABIT TEMPLATES ===")) {
+                            inCustomHabitsSection = true;
+                            fileContent.append(line).append("\n");
+                            
+                            // Write all existing custom habits plus the new one
+                            for (CustomHabit ch : currentUser.getCustomHabitTemplates()) {
+                                fileContent.append("CustomHabitName=").append(ch.getName()).append("\n");
+                                fileContent.append("CustomHabitDescription=").append(ch.getDescription()).append("\n");
+                                fileContent.append("CustomHabitGoal=").append(ch.getGoal()).append("\n");
+                                fileContent.append("CustomHabitUnit=").append(ch.getGoalUnit()).append("\n");
+                                fileContent.append("---\n"); // Separator
+                            }
+                            customHabitsWritten = true;
+                            continue;
+                        }
+                        
+                        // Skip existing custom habits section content
+                        if (inCustomHabitsSection) {
+                            if (line.startsWith("===") && !line.equals("=== CUSTOM HABIT TEMPLATES ===")) {
+                                inCustomHabitsSection = false;
+                                fileContent.append(line).append("\n");
+                            }
+                            // Skip lines in custom habits section as we're rewriting them
+                            continue;
+                        }
+                        
+                        fileContent.append(line).append("\n");
+                    }
+                    
+                    // If custom habits section doesn't exist, add it before daily progress
+                    if (!customHabitsWritten) {
+                        // Find the right place to insert (before daily progress or at the end)
+                        String content = fileContent.toString();
+                        int insertIndex = content.indexOf("=== DAILY PROGRESS ===");
+                        
+                        if (insertIndex != -1) {
+                            // Insert before daily progress
+                            StringBuilder newContent = new StringBuilder();
+                            newContent.append(content.substring(0, insertIndex));
+                            newContent.append("=== CUSTOM HABIT TEMPLATES ===\n");
+                            
+                            // Add all custom habits
+                            for (CustomHabit ch : currentUser.getCustomHabitTemplates()) {
+                                newContent.append("CustomHabitName=").append(ch.getName()).append("\n");
+                                newContent.append("CustomHabitDescription=").append(ch.getDescription()).append("\n");
+                                newContent.append("CustomHabitGoal=").append(ch.getGoal()).append("\n");
+                                newContent.append("CustomHabitUnit=").append(ch.getGoalUnit()).append("\n");
+                                newContent.append("---\n");
+                            }
+                            newContent.append("\n");
+                            newContent.append(content.substring(insertIndex));
+                            fileContent = newContent;
+                        } else {
+                            // Add at the end
+                            fileContent.append("\n=== CUSTOM HABIT TEMPLATES ===\n");
+                            for (CustomHabit ch : currentUser.getCustomHabitTemplates()) {
+                                fileContent.append("CustomHabitName=").append(ch.getName()).append("\n");
+                                fileContent.append("CustomHabitDescription=").append(ch.getDescription()).append("\n");
+                                fileContent.append("CustomHabitGoal=").append(ch.getGoal()).append("\n");
+                                fileContent.append("CustomHabitUnit=").append(ch.getGoalUnit()).append("\n");
+                                fileContent.append("---\n");
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Write the updated content back to file
+            try (FileWriter writer = new FileWriter(file, false)) { // false = overwrite
+                writer.write(fileContent.toString());
+            }
+            
+            System.out.println("✅ Custom habit template saved successfully!");
+            
+        } catch (IOException e) {
+            System.out.println("❌ Error saving custom habit template: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // Add this method to load custom habit templates when user logs in
+    public void loadCustomHabitTemplates(User user) {
+        String filePath = "Database/data_" + user.getUsername() + ".txt";
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            boolean inCustomHabitsSection = false;
+            
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                
+                if (line.equals("=== CUSTOM HABIT TEMPLATES ===")) {
+                    inCustomHabitsSection = true;
+                    continue;
+                }
+                
+                if (inCustomHabitsSection) {
+                    // Check for section end
+                    if (line.startsWith("===") && !line.equals("=== CUSTOM HABIT TEMPLATES ===")) {
+                        break;
+                    }
+                    
+                    // Parse custom habit
+                    if (line.startsWith("CustomHabitName=")) {
+                        String name = line.split("=", 2)[1];
+                        
+                        // Read description
+                        line = reader.readLine().trim();
+                        String description = "";
+                        if (line.startsWith("CustomHabitDescription=")) {
+                            description = line.split("=", 2)[1];
+                        }
+                        
+                        // Read goal
+                        line = reader.readLine().trim();
+                        int goal = 0;
+                        if (line.startsWith("CustomHabitGoal=")) {
+                            goal = Integer.parseInt(line.split("=", 2)[1]);
+                        }
+                        
+                        // Read unit
+                        line = reader.readLine().trim();
+                        String unit = "";
+                        if (line.startsWith("CustomHabitUnit=")) {
+                            unit = line.split("=", 2)[1];
+                        }
+                        
+                        // Create and add the custom habit template
+                        CustomHabit customHabit = new CustomHabit(name, description, goal, unit);
+                        user.addCustomHabitTemplate(customHabit);
+                        
+                        System.out.println("Loaded custom habit: " + name);
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("No existing custom habits found for user: " + user.getUsername());
+        } catch (IOException e) {
+            System.err.println("Error loading custom habits: " + e.getMessage());
+        }
+    }
+
+    // Modified createCustomHabit method to save the template
     public void createCustomHabit() {
         System.out.println("\n=== CREATE CUSTOM HABIT ===");
 
@@ -618,13 +774,16 @@ public class Main {
         // Create the custom habit
         CustomHabit customHabit = new CustomHabit(name, description, goalAmount, goalUnit);
 
-        // (Optional) Add to a list of habits if you maintain one
-        currentUser.addCustomHabitTemplate(customHabit); // Assuming habitList is a List<Habit> you maintain
+        // Add to user's templates
+        currentUser.addCustomHabitTemplate(customHabit);
+        
+        // Save to database file
+        saveCustomHabitTemplate(customHabit);
 
         System.out.println("✅ Custom habit added successfully!");
         customHabit.printDetails(); // Show details
-        menu();
     }
+    // CUSTOM HABITS SECTION - END
 
     // HISTORY START
     private List<HistoryEntry> loadHistoryEntries() {
@@ -1325,26 +1484,26 @@ public void checkAchievement() {
     }
 
     private void saveCustomHabitsForDay(FileWriter writer, LocalDate date) throws IOException {
-    ArrayList<CustomHabit> customTemplates = currentUser.getCustomHabitTemplates();
-    
-    if (!customTemplates.isEmpty()) {
-        writer.write("=== CUSTOM HABITS ===\n");
+        ArrayList<CustomHabit> customTemplates = currentUser.getCustomHabitTemplates();
         
-        for (CustomHabit habit : customTemplates) {
-            int progress = habit.getProgressForDate(date);
-            int goal = habit.getGoal();
-            boolean met = progress >= goal;
-            
-            writer.write("CustomHabitName=" + habit.getName() + "\n");
-            writer.write("CustomHabitGoal=" + goal + "\n");
-            writer.write("CustomHabitProgress=" + progress + "\n");
-            writer.write("CustomHabitUnit=" + habit.getGoalUnit() + "\n");
-            writer.write("CustomHabitMet=" + met + "\n");
-            writer.write("---\n"); // Separator between custom habits
+        if (customTemplates != null && !customTemplates.isEmpty()) {
+            for (CustomHabit habit : customTemplates) {
+                int progress = habit.getProgressForDate(date);
+                int goal = habit.getGoal();
+                boolean met = progress >= goal;
+                
+                // Format all progress data for one habit onto a single, separate line
+                String progressLine = String.format("CustomHabitProgress: Name=%s, Progress=%d, Goal=%d, Unit=%s, Met=%b\n",
+                    habit.getName(),
+                    progress,
+                    goal,
+                    habit.getGoalUnit(),
+                    met);
+                
+                writer.write(progressLine);
+            }
         }
+        checkAchievement();
     }
-    checkAchievement();
-}
-
     }
 
