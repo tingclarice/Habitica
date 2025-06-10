@@ -66,12 +66,6 @@ public class User {
         }
     }
 
-    // Method to reset all habits
-    public void resetAllHabits() {
-        for (Habit habit : habits) {
-            habit.reset();
-        }
-    }
 
     // Method to print all habits
     public void printAllHabits() {

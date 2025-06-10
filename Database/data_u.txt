@@ -1,0 +1,28 @@
+=== USER INFO ===
+Username=u
+Password=u
+=== GOALS ===
+CaloriesGoal=1
+WaterGoal=7
+SleepGoal=5
+ExerciseGoal=6
+
+=== DAILY PROGRESS ===
+Date=2025-06-09
+CaloriesGoal=1
+CaloriesProgress=0
+CaloriesMet=false
+WaterGoal=7
+WaterProgress=0
+WaterMet=false
+SleepGoal=5
+SleepProgress=0
+SleepMet=false
+ExerciseGoal=6
+ExerciseProgress=0
+ExerciseMet=false
+AchievementsUnlocked=None
+=== CUSTOM HABITS ===
+NoCustomHabits=true
+---
+=== END OF DAY ===

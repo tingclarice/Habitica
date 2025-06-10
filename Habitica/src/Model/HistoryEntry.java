@@ -41,7 +41,7 @@ public class HistoryEntry {
         @Override
         public String toString() {
             return name + ": " + progress + "/" + goal + " " + unit + 
-                   " - " + (goalMet ? "✅ Met" : "❌ Not Met");
+                " - " + (goalMet ? "✅ Met" : "❌ Not Met");
         }
     }
 
@@ -65,7 +65,7 @@ public class HistoryEntry {
     public void addCustomHabit(CustomHabit habit) {
         int progress = habit.getProgressForDate(this.date);
         addCustomHabitProgress(habit.getName(), habit.getDescription(), 
-                             habit.getGoal(), progress, habit.getGoalUnit());
+                            habit.getGoal(), progress, habit.getGoalUnit());
     }
 
     // Getters

@@ -6,12 +6,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.HashMap;
+
 
 import Model.User;
 import Model.Habit;
 import Model.HistoryEntry;
-// import Model.CustomHabit;
 import Model.DefaultHabit;
 import Model.WaterIntakeHabit;
 import Model.Achievement;
@@ -68,9 +67,8 @@ public class Main {
                         password = line.split("=")[1];
                     } 
                 }
-
+                
                 User user = new User(username, password);
- 
 
                 users.add(user);
             } catch (IOException e) {

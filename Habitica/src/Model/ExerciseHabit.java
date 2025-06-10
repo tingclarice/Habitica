@@ -50,13 +50,6 @@ public class ExerciseHabit extends DefaultHabit {
     }
 
     @Override
-    public void reset() {
-        this.duration = 0; // Reset duration
-        this.targetduration = 0; // Reset target duration
-        this.type = "Unknown"; // Reset type to a default value
-    }
-
-    @Override
     public void printDetails() {
         System.out.println("Exercise Type: " + type);
         System.out.println("Duration: " + duration + " minutes");
