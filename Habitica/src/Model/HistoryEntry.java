@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import Model.HistoryEntry.CustomHabitProgress;
+
 public class HistoryEntry {
     private LocalDate date;
     private Map<String, Integer> goals = new HashMap<>();
@@ -13,6 +15,15 @@ public class HistoryEntry {
     private List<CustomHabitProgress> customHabitsProgress = new ArrayList<>();
 
     // Inner class to store custom habit progress for a specific date
+    // CustomHabitProgress does not access date, goals, or any other instance field of HistoryEntry.
+    // It's just a record of one custom habit’s data on a certain day, a String, a few ints, a boolean, and a toString().
+    // keep all keys in sync manually across the maps
+    
+    // Karena secara konseptual dan konteks penggunaan, CustomHabitProgress hanya relevan di dalam HistoryEntry.
+    // CustomHabitProgress hanya dibuat, diisi, dan dipakai oleh HistoryEntry.
+    // Dia tidak digunakan di bagian lain program (misalnya di Dashboard, User, atau CustomHabit).
+    // Dia tidak mewakili konsep besar seperti User, Habit, atau Goal.
+    // 
     public static class CustomHabitProgress {
         private String name;
         private String description;
@@ -30,7 +41,8 @@ public class HistoryEntry {
             this.goalMet = progress >= goal;
         }
 
-        // Getters
+        // Getters only: because we want to make it immutable
+        // protects it for external modification
         public String getName() { return name; }
         public String getDescription() { return description; }
         public int getGoal() { return goal; }

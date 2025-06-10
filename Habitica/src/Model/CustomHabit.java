@@ -58,13 +58,7 @@ public class CustomHabit extends Habit {
         LocalDate today = LocalDate.now();
         return getProgressForDate(today) >= goal;
     }
-
-    @Override
-    public void reset() {
-        LocalDate today = LocalDate.now();
-        progressMap.put(today,0);
-    }
-
+    
     @Override
     public void printDetails() {
         LocalDate today = LocalDate.now();

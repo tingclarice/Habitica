@@ -55,13 +55,6 @@ public class SleepHabit extends Habit {
     }
 
     @Override
-    public void reset() {
-        this.sleepDuration = 0; // Reset sleep duration
-        this.sleepQuality = "Unknown"; // Reset sleep quality to a default value
-        this.targetSleepDuration = 0; // Reset target sleep duration
-    }
-
-    @Override
     public void printDetails() {
         System.out.println("Sleep Habit: " + getName());
         System.out.println("Description: " + getDescription());
