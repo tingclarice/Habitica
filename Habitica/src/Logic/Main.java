@@ -26,7 +26,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.Socket;
 
 public class Main {
     private ArrayList<User> users = new ArrayList<>();
@@ -71,7 +70,7 @@ public class Main {
                 }
 
                 User user = new User(username, password);
-
+ 
 
                 users.add(user);
             } catch (IOException e) {
@@ -190,7 +189,7 @@ public class Main {
         // Load all existing users from database at startup
         loadUsersFromDatabase();
         
-        // currentUser remains null until someone logs in
+        // currentUser remains null until someone logs in 
         currentUser = null;
     }
 
