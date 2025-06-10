@@ -1221,7 +1221,7 @@ public void checkAchievement() {
         this.todayCalories += caloriesConsumed;
 
 
-        if(this.todayCalories >= calorieGoal) { // Gunakan this.todayWaterIntake untuk pengecekan
+        if(this.todayCalories <= calorieGoal) { // Gunakan this.todayWaterIntake untuk pengecekan
             habitCount++;
     }
     checkAchievement();
