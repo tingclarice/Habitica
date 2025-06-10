@@ -27,8 +27,8 @@ public class Achievement {
     public void unlock() {
         this.unlocked = true; // Set to true when the achievement is unlocked
     }
-    public String toString(){
-        return (unlocked ? "[UNLOCKED]" : "[LOCKED]") + " " + title + ": " + description;
+    public String toString() {
+        return this.title + ": " + this.description;
     }
 
 

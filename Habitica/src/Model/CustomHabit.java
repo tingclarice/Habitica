@@ -1,29 +1,35 @@
 package Model;
 
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+
 public class CustomHabit extends Habit {
     private int goal;
-    private int progress;
+    private Map<LocalDate, Integer> progressMap = new HashMap<>();
+    private String goalUnit;
 
-    public CustomHabit(String name, String description, int goal) {
+    public CustomHabit(String name, String description, int goal, String goalUnit) {
         super(name, description);
         this.goal = goal;
-        this.progress = 0;
+        this.goalUnit = goalUnit;
     }
 
-    public void logProgress(int amount) {
-        progress += amount;
+    public void logProgress(LocalDate date, int amount) {
+        int current = progressMap.getOrDefault(date, 0);
+        progressMap.put(date, current + amount);
     }
 
-    public void setProgress(int progress) {
-        this.progress = progress;
+    public int getProgressForDate(LocalDate date) {
+        return progressMap.getOrDefault(date, 0);
     }
 
-    public int getProgress() {
-        return progress;
+    public void setProgressForDate(LocalDate date, int progress) {
+        progressMap.put(date, progress);
     }
 
-    public void resetProgress() {
-        this.progress = 0;
+    public void resetProgressForDate(LocalDate date) {
+        progressMap.remove(date);
     }
 
     public int getGoal() {
@@ -34,21 +40,33 @@ public class CustomHabit extends Habit {
         this.goal = goal;
     }
 
+    public String getGoalUnit() {
+        return goalUnit;
+    }
+
+    public void setGoalUnit(String goalUnit) {
+        this.goalUnit = goalUnit;
+    }
+
+    public boolean goalMetForDate(LocalDate date) {
+        return getProgressForDate(date) >= goal;
+    }
+
+
     @Override
     public boolean goalMet() {
-        return progress >= goal;
+        LocalDate today = LocalDate.now();
+        return getProgressForDate(today) >= goal;
     }
-
-    @Override
-    public void reset() {
-        this.progress = 0;
-    }
-
+    
     @Override
     public void printDetails() {
+        LocalDate today = LocalDate.now();
+        int todayProgress = getProgressForDate(today);
+        
         System.out.println("Custom Habit: " + getName());
         System.out.println("Description: " + getDescription());
-        System.out.println("Progress: " + progress + "/" + goal);
+        System.out.println("Progress: " + todayProgress + "/" + goal + " " + goalUnit);
         System.out.println("Goal Met: " + goalMet());
     }
 

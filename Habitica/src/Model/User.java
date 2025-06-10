@@ -6,8 +6,12 @@ public class User {
     protected String username;
     protected String password;
     protected ArrayList<Habit> habits;
-    private ArrayList<CustomHabit> customHabitTemplates = new ArrayList<>();
-    private HashMap<String, Achievement> achievements = new HashMap<>();
+    protected ArrayList<CustomHabit> customHabitTemplates = new ArrayList<>();
+    protected HashMap<String, Achievement> achievements = new HashMap<>();
+    protected CaloriesTracker caloriesTracker;
+    protected SleepHabit sleepHabit;
+    protected WaterIntakeHabit waterIntakeHabit;
+    protected ExerciseHabit exerciseHabit;
     
     // Constructor
     public User(String username, String password) {
@@ -59,13 +63,6 @@ public class User {
     public void removeCustomHabitTemplate(int index) {
         if (index >= 0 && index < customHabitTemplates.size()) {
             customHabitTemplates.remove(index);
-        }
-    }
-
-    // Method to reset all habits
-    public void resetAllHabits() {
-        for (Habit habit : habits) {
-            habit.reset();
         }
     }
 
@@ -144,6 +141,22 @@ public class User {
         }
         return null;
     }
+
+    public void setCaloriesTracker(CaloriesTracker tracker) {
+        this.caloriesTracker = tracker;
+    }
+
+    public void setSleepHabit(SleepHabit sleepHabit) {
+        this.sleepHabit = sleepHabit;
+    }
+    public void setWaterIntakeHabit(WaterIntakeHabit waterHabit) {
+        this.waterIntakeHabit = waterHabit;
+    }
+    public void setExerciseHabit(ExerciseHabit exerciseHabit) {
+        this.exerciseHabit = exerciseHabit;
+    }
+    
+
 }
 
 

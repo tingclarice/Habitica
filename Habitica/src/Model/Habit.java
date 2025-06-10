@@ -30,18 +30,8 @@ public abstract class Habit {
         this.description = description;
     }
 
-    public int getStreak() {
-        return streak;
-    }
-
-    public void setStreak(int streak) {
-        this.streak = streak;
-    }
-
     // Enforced method for subclasses
     public abstract boolean goalMet();
-
-    public abstract void reset();
 
     public abstract void printDetails();
 

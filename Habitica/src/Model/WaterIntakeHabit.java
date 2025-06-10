@@ -29,13 +29,17 @@ public class WaterIntakeHabit extends DefaultHabit {
         this.goal = goal;
     }
 
+    @Override
     public boolean goalMet() {
         return waterIntake >= goal;
     }
 
-    public void reset() {
-        this.waterIntake = 0;
+    @Override
+    public void printDetails() {
+        System.out.println("Water Intake Habit: " + getName());
+        System.out.println("Description: " + getDescription());
+        System.out.println("Water Intake: " + waterIntake + " liters");
+        System.out.println("Goal: " + goal + " liters");
+        System.out.println("Goal Met: " + goalMet());
     }
-
-    public void printDetails() {}
 }

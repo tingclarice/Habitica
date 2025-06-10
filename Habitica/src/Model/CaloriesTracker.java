@@ -40,11 +40,6 @@ public class CaloriesTracker extends DefaultHabit {
     }
 
     @Override
-    public void reset() {
-        this.caloriesConsumed = 0;
-    }
-
-    @Override
     public void printDetails() {
         System.out.println("Calories Tracker: " + getName());
         System.out.println("Description: " + getDescription());

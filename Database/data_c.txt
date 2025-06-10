@@ -1,0 +1,8 @@
+=== USER INFO ===
+Username=c
+Password=c
+=== GOALS ===
+CaloriesGoal=2000
+WaterGoal=2
+SleepGoal=8
+ExerciseGoal=30
