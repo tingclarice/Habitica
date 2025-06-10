@@ -1,22 +1,24 @@
 import java.util.InputMismatchException;
 import java.util.List;
-import java.util.Map;
-import java.time.DateTimeException;
+import java.util.Map; // Map is an object that maps keys to values
+
+// Belongs to Java Time package, sublass of Runtime Exception
+// This exception is thrown when there are issues related to date and time operations
+import java.time.DateTimeException; 
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.HashMap;
 
 import Model.User;
-import Model.Habit;
 import Model.HistoryEntry;
-// import Model.CustomHabit;
+import Model.Habit;
+import Model.CustomHabit;
 import Model.DefaultHabit;
 import Model.WaterIntakeHabit;
 import Model.Achievement;
 import Model.CaloriesTracker;
-import Model.CustomHabit;
 import Model.SleepHabit;
 import Model.ExerciseHabit;
 
@@ -26,7 +28,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.Socket;
 
 public class Main {
     private ArrayList<User> users = new ArrayList<>();
@@ -51,17 +52,39 @@ public class Main {
     int tmp_sleepGoal = sleepGoal;
     int tmp_exerciseGoal = exerciseGoal;
 
+    public Main() {
+        achievements.put("JustOneStep", new Achievement("Just One Step", "Setiap perjalanan panjang dimulai dari satu langkah."));
+        achievements.put("ConsistencyIsKey", new Achievement("Consistency is Key", "Konsistensi adalah kunci untuk mencapai tujuan."));
+        achievements.put("HealthyMindHealthyBody", new Achievement("Healthy Mind, Healthy Body", "Jaga kesehatan mental dan fisikmu!"));
+        achievements.put("ProgressNotPerfection", new Achievement("Progress Not Perfection", "Fokus pada kemajuan, bukan kesempurnaan."));
+        achievements.put("SmallWins", new Achievement("Small Wins", "Rayakan setiap kemenangan kecil dalam perjalananmu!"));
+        achievements.put("GoalGetter", new Achievement("Goal Getter", "Setiap pencapaian dimulai dengan keputusan untuk mencoba."));
+        achievements.put("HabitBuilder", new Achievement("Habit Builder", "Bangun kebiasaan baik setiap hari!"));
+        achievements.put("HealthyLifestyle", new Achievement("Healthy Lifestyle", "Gaya hidup sehat adalah investasi terbaik untuk masa depanmu!"));
+        achievements.put("ConsistencyKing", new Achievement("Consistency King", "Setiap hari adalah kesempatan baru untuk menjadi lebih baik."));
+        achievements.put("MindfulLiving", new Achievement("Mindful Living", "Hiduplah dengan kesadaran penuh dan nikmati setiap momen."));
+    
+        // Load all existing users from database at startup
+        loadUsersFromDatabase();
+        
+        // currentUser remains null until someone logs in
+        currentUser = null;
+    }
+
     private void loadUsersFromDatabase() {
     File databaseFolder = new File("Database");
     File[] files = databaseFolder.listFiles((dir, name) -> name.startsWith("data_") && name.endsWith(".txt"));
 
     if (files != null) {
         for (File file : files) {
+            // FileReader = reads characters from a file
+            // Buffered Reader = reads characters more efficiently (line-by-line)
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String line;
                 String username = "";
                 String password = "";
 
+                // Instantiates a new user object from each username
                 while ((line = reader.readLine()) != null) {
                     if (line.startsWith("Username=")) {
                         username = line.split("=")[1];
@@ -76,16 +99,21 @@ public class Main {
                 users.add(user);
             } catch (IOException e) {
                 System.out.println("Error reading file: " + file.getName());
+                // e.printStackTracke() prints type exception & message about what went wrong
+                // The Stack Trace is a list of the method calls that led to the error
                 e.printStackTrace();
             }
         }
     }
 }
 
+    // METHOD TO PARSE & SET GOALS FOR EXISTING USERS
     public void parseAndSetGoals() {
+    // Gets the filePath of the user data
     String filePath = "Database/data_" + currentUser.getUsername() + ".txt";
     boolean fileReadSuccess = false;
     
+    // Tries to read file line-by-line
     try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
         String line;
         boolean inGoalsSection = false;
@@ -115,6 +143,7 @@ public class Main {
                 if (line.contains("=")) {
                     String[] parts = line.split("=", 2); // Split on first = only
                     if (parts.length == 2) {
+                        // trim() is a method 
                         String key = parts[0].trim();
                         String value = parts[1].trim();
                         
@@ -173,25 +202,6 @@ public class Main {
         this.waterGoal = 2;            // Default water goal in liters
         this.sleepGoal = 8;            // Default sleep goal in hours
         this.exerciseGoal = 30;        // Default exercise goal in minutes
-    }
-
-    public Main() {
-        achievements.put("JustOneStep", new Achievement("Just One Step", "Setiap perjalanan panjang dimulai dari satu langkah."));
-        achievements.put("ConsistencyIsKey", new Achievement("Consistency is Key", "Konsistensi adalah kunci untuk mencapai tujuan."));
-        achievements.put("HealthyMindHealthyBody", new Achievement("Healthy Mind, Healthy Body", "Jaga kesehatan mental dan fisikmu!"));
-        achievements.put("ProgressNotPerfection", new Achievement("Progress Not Perfection", "Fokus pada kemajuan, bukan kesempurnaan."));
-        achievements.put("SmallWins", new Achievement("Small Wins", "Rayakan setiap kemenangan kecil dalam perjalananmu!"));
-        achievements.put("GoalGetter", new Achievement("Goal Getter", "Setiap pencapaian dimulai dengan keputusan untuk mencoba."));
-        achievements.put("HabitBuilder", new Achievement("Habit Builder", "Bangun kebiasaan baik setiap hari!"));
-        achievements.put("HealthyLifestyle", new Achievement("Healthy Lifestyle", "Gaya hidup sehat adalah investasi terbaik untuk masa depanmu!"));
-        achievements.put("ConsistencyKing", new Achievement("Consistency King", "Setiap hari adalah kesempatan baru untuk menjadi lebih baik."));
-        achievements.put("MindfulLiving", new Achievement("Mindful Living", "Hiduplah dengan kesadaran penuh dan nikmati setiap momen."));
-    
-        // Load all existing users from database at startup
-        loadUsersFromDatabase();
-        
-        // currentUser remains null until someone logs in
-        currentUser = null;
     }
 
     // STARTING SCREEN
@@ -302,10 +312,13 @@ public class Main {
 
         User newUser = new User(username, password);
         users.add(newUser);
-        setGoalStart(newUser); // Set default goals after sign up
+
+        // Set default goals after sign up
+        setGoalStart(newUser); 
     }
     
 
+    // METHOD FOR NEW USERS TO SET DEFAULT GOALS
     public void setGoalStart(User user) {
         System.out.println("\n=== GOAL SETTING ===");
         System.out.println("Set your daily goals for default habits you can track:");
@@ -569,6 +582,8 @@ public class Main {
                 // Show the result with the corrected printf
                 System.out.println("✅ Progress for '" + selectedHabit.getName() + "' updated successfully!");
                 // The last format specifier must be %s for the String unit
+
+                // print format
                 System.out.printf("New Progress: %d / %d %s\n", 
                     selectedHabit.getProgressForDate(today), 
                     selectedHabit.getGoal(), 
@@ -592,6 +607,9 @@ public class Main {
         
         try {
             // Read existing content
+            // StringBuilder is a Java class used to build or edit text efficiently
+            // In Java, String is immutable, that means once created it can't be changed (Java creates a new String behind the scenes)
+            // StringBuilder allows you to modify the same string object without creating new ones over and over
             StringBuilder fileContent = new StringBuilder();
             File file = new File(filePath);
             
@@ -636,11 +654,16 @@ public class Main {
                     if (!customHabitsWritten) {
                         // Find the right place to insert (before daily progress or at the end)
                         String content = fileContent.toString();
+                        // indexOf finds the position (index) of the first occurence of a substring in a string
                         int insertIndex = content.indexOf("=== DAILY PROGRESS ===");
                         
+                        // indexOf returns -1 if the string is not found
+                        // the line below is saying if the string exists, we can insert the content before that section
                         if (insertIndex != -1) {
                             // Insert before daily progress
                             StringBuilder newContent = new StringBuilder();
+
+                            // append() adds text to the end of a StringBuilder object
                             newContent.append(content.substring(0, insertIndex));
                             newContent.append("=== CUSTOM HABIT TEMPLATES ===\n");
                             
@@ -713,6 +736,7 @@ public class Main {
                         line = reader.readLine().trim();
                         String description = "";
                         if (line.startsWith("CustomHabitDescription=")) {
+                            // 2 means: "only split once, into 2 pieces"
                             description = line.split("=", 2)[1];
                         }
                         
@@ -720,6 +744,7 @@ public class Main {
                         line = reader.readLine().trim();
                         int goal = 0;
                         if (line.startsWith("CustomHabitGoal=")) {
+                            // 2 means: "only split once, into 2 pieces"
                             goal = Integer.parseInt(line.split("=", 2)[1]);
                         }
                         
@@ -787,10 +812,11 @@ public class Main {
 
     // HISTORY START
     private List<HistoryEntry> loadHistoryEntries() {
-    List<HistoryEntry> entries = new ArrayList<>();
+    ArrayList<HistoryEntry> entries = new ArrayList<>();
     String filePath = "Database/data_" + currentUser.getUsername() + ".txt";
     
     try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        // Declaration = telling Java what type 
         String line;
         HistoryEntry currentEntry = null;
         boolean inDailyProgress = false;
@@ -897,19 +923,31 @@ private void processCustomHabits(BufferedReader reader, HistoryEntry entry) thro
     }
 
 public void viewHistory() {
+    // Prints a title and loads the saved history into a list.
     System.out.println("\n=== VIEW HISTORY ===");
     List<HistoryEntry> entries = loadHistoryEntries();
     
+    //  If there’s no history, print a message and exit the method.
     if (entries.isEmpty()) {
         System.out.println("No history entries found.");
         return;
     }
     
     // Sort by date (newest first)
+    // Sort is a method that comes from the java.util.List interface
+    // Sorts the history **by date**, with the **newest first**.
     entries.sort((e1, e2) -> e2.getDate().compareTo(e1.getDate()));
-    
+    // it uses a lambda expression (short-hand for creating an anonymous function)
+    // if e2 is more recent than e1, it puts e2 before e1.
+    // compareTo is from the "Comparable" interface (can be implemented by LocalDate, etc)
+
+    // PAGINATION SETUP
     int pageSize = 1;
     int currentPage = 0;
+    
+    // entries.size() returns the total number of history entries
+    // (double) entries.size() / pageSize divides the number of entries by how many you want to show per page.
+    // It casts entries.size() to a double so the division isn't rounded down.
     int totalPages = (int) Math.ceil((double) entries.size() / pageSize);
     
     while (true) {
@@ -1026,10 +1064,13 @@ private void viewDetailedHistory(HistoryEntry entry) {
     System.out.println("Press enter to continue...");
     s.nextLine();
 }
-
     // HISTORY END
 
     // ACHIEVEMENTS START
+    // Secara keseluruhan, sistem ini bekerja dengan tiga fungsi utama:
+    // checkAchievement(): Mesin logika yang memeriksa apakah pengguna memenuhi syarat untuk mendapatkan achievement baru.
+    // loadUserAchievements(): Fungsi yang memuat data achievement yang sudah didapat pengguna dari file saat mereka login.
+    // achievement(): Antarmuka (UI) yang menampilkan daftar semua achievement (baik yang terkunci maupun yang sudah terbuka) kepada pengguna.
     public void achievement() {
         checkAchievement();
         if (currentUser.getAchievementsMap().isEmpty()) {
@@ -1053,32 +1094,32 @@ private void viewDetailedHistory(HistoryEntry entry) {
     }
     
     // Tambahkan fungsi ini di dalam class Main Anda
-private void loadUserAchievements(User user) {
-    String filePath = "Database/data_" + user.getUsername() + ".txt";
-    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-            // Cari baris yang menyimpan data achievement
-            if (line.startsWith("AchievementsUnlocked=")) {
-                String[] parts = line.split("=", 2);
-                if (parts.length > 1 && !parts[1].equalsIgnoreCase("None")) {
-                    String[] unlockedKeys = parts[1].split(",");
-                    for (String key : unlockedKeys) {
-                        // Ambil objek Achievement dari map global berdasarkan key
-                        if (achievements.containsKey(key)) {
-                            // Tambahkan achievement ke object user saat ini
-                            user.addAchievement(achievements.get(key));
+    private void loadUserAchievements(User user) {
+        String filePath = "Database/data_" + user.getUsername() + ".txt";
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Cari baris yang menyimpan data achievement
+                if (line.startsWith("AchievementsUnlocked=")) {
+                    String[] parts = line.split("=", 2);
+                    if (parts.length > 1 && !parts[1].equalsIgnoreCase("None")) {
+                        String[] unlockedKeys = parts[1].split(",");
+                        for (String key : unlockedKeys) {
+                            // Ambil objek Achievement dari map global berdasarkan key
+                            if (achievements.containsKey(key)) {
+                                // Tambahkan achievement ke object user saat ini
+                                user.addAchievement(achievements.get(key));
+                            }
                         }
                     }
+                    // Setelah ditemukan, kita bisa berhenti membaca file
+                    break; 
                 }
-                // Setelah ditemukan, kita bisa berhenti membaca file
-                break; 
             }
+        } catch (IOException e) {
+            System.err.println("Error loading achievements for user " + user.getUsername() + ": " + e.getMessage());
         }
-    } catch (IOException e) {
-        System.err.println("Error loading achievements for user " + user.getUsername() + ": " + e.getMessage());
     }
-}
 
     // Ganti seluruh fungsi checkAchievement() Anda dengan ini
 public void checkAchievement() {

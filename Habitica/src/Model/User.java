@@ -6,12 +6,12 @@ public class User {
     protected String username;
     protected String password;
     protected ArrayList<Habit> habits;
-    private ArrayList<CustomHabit> customHabitTemplates = new ArrayList<>();
-    private HashMap<String, Achievement> achievements = new HashMap<>();
-    private CaloriesTracker caloriesTracker;
-    private SleepHabit sleepHabit;
-    private WaterIntakeHabit waterIntakeHabit;
-    private ExerciseHabit exerciseHabit;
+    protected ArrayList<CustomHabit> customHabitTemplates = new ArrayList<>();
+    protected HashMap<String, Achievement> achievements = new HashMap<>();
+    protected CaloriesTracker caloriesTracker;
+    protected SleepHabit sleepHabit;
+    protected WaterIntakeHabit waterIntakeHabit;
+    protected ExerciseHabit exerciseHabit;
     
     // Constructor
     public User(String username, String password) {
