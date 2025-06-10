@@ -971,7 +971,7 @@ private void viewDetailedHistory(HistoryEntry entry) {
     // Overall summary
     System.out.println("\n📊 DAILY SUMMARY");
     System.out.println("Total Habits Completed: " + entry.getTotalHabitsCompleted() + 
-                      "/" + entry.getTotalHabitsTracked());
+                    "/" + entry.getTotalHabitsTracked());
     System.out.println("Completion Rate: " + String.format("%.1f", entry.getCompletionPercentage()) + "%");
     
     // Default habits section
@@ -1042,7 +1042,7 @@ private void viewDetailedHistory(HistoryEntry entry) {
         
                 // Cek apakah PENGGUNA memiliki achievement ini
                 if (currentUser.getAchievementsMap().containsKey(achievementKey)) {
-                    // Jika ya, cetak UNLOCKED
+                    
                     System.out.println("[UNLOCKED] " + achievement.getTitle() + ": " + achievement.getDescription());
                 } else {
                     // Jika tidak, cetak LOCKED
@@ -1052,7 +1052,6 @@ private void viewDetailedHistory(HistoryEntry entry) {
         }        
     }
     
-    // Tambahkan fungsi ini di dalam class Main Anda
 private void loadUserAchievements(User user) {
     String filePath = "Database/data_" + user.getUsername() + ".txt";
     try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -1316,8 +1315,8 @@ public void updateCustomHabitProgress() {
         CustomHabit habit = templates.get(i);
         int currentProgress = habit.getProgressForDate(LocalDate.now());
         System.out.println((i + 1) + ". " + habit.getName() + 
-                          " (Current: " + currentProgress + "/" + habit.getGoal() + 
-                          " " + habit.getGoalUnit() + ")");
+                        " (Current: " + currentProgress + "/" + habit.getGoal() + 
+                        " " + habit.getGoalUnit() + ")");
     }
     
     System.out.print("Select habit to update (1-" + templates.size() + "): ");
@@ -1331,7 +1330,7 @@ public void updateCustomHabitProgress() {
             
             System.out.println("\nSelected: " + selectedHabit.getName());
             System.out.println("Current progress: " + currentProgress + "/" + 
-                             selectedHabit.getGoal() + " " + selectedHabit.getGoalUnit());
+                            selectedHabit.getGoal() + " " + selectedHabit.getGoalUnit());
             System.out.print("Enter new progress: ");
             
             int newProgress = s.nextInt();
@@ -1341,7 +1340,7 @@ public void updateCustomHabitProgress() {
                 selectedHabit.setProgressForDate(LocalDate.now(), newProgress);
                 System.out.println("✅ Progress updated successfully!");
                 System.out.println("New progress: " + newProgress + "/" + 
-                                 selectedHabit.getGoal() + " " + selectedHabit.getGoalUnit());
+                                selectedHabit.getGoal() + " " + selectedHabit.getGoalUnit());
                 
                 // Check if goal is met
                 if (newProgress >= selectedHabit.getGoal()) {
